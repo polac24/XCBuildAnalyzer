@@ -3,8 +3,16 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    // -enable-bare-slash-regex becomes
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+]
+
 let package = Package(
     name: "BuildAnalyzer",
+    platforms: [
+        .macOS(.v13),
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -16,7 +24,10 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "BuildAnalyzerKit"),
+            name: "BuildAnalyzerKit",
+            // -enable-bare-slash-regex becomes
+            swiftSettings: swiftSettings
+        ),
         .target(
             name: "GraphKit"),
         .testTarget(
