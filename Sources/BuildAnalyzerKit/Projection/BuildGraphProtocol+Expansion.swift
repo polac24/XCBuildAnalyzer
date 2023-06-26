@@ -10,41 +10,72 @@ import Foundation
 public extension BuildGraphProtocol {
 
     func expand(projection: BuildGraphProjection, with expansion: BuildGraphProjectionExpansion) -> BuildGraphProjection {
-        guard let node = nodes[expansion.nodeId], let projectionNode = projection.nodes[expansion.nodeId] else {
+        guard let node = nodes[expansion.nodeId] else {
             // TODO: log expansion nodeId misalignment (the nodeId is apparently invalid)
             return projection
         }
         var newProjection = projection
-        var newProjectionNode = projectionNode
+        var projectionNode = projection.nodes[expansion.nodeId, default: BuildGraphNodeProjectionNode(
+            node: node.id,
+            inputNodes: [],
+            outputNodes: [],
+            hidesSomeInputs: true,
+            hidesSomeOutputs: true)
+        ]
+        var extraNodes = Set<BuildGraphNodeId>()
         switch expansion {
         case .inputs(_, let maxCount):
-            guard newProjectionNode.hidesSomeInputs else {
+            guard projectionNode.hidesSomeInputs else {
                 // TODO: log there is nothing to expand
                 return projection
             }
-            let previousInputs = newProjectionNode.inputNodes
+            let previousInputs = projectionNode.inputNodes
             let actualInputs = node.inputs
             let hiddenInputs = actualInputs.subtracting(previousInputs)
             let expansionInputs = hiddenInputs.prefix(maxCount)
+            extraNodes.formUnion(expansionInputs)
 
-            // append up to n
-            newProjectionNode.inputNodes = projectionNode.inputNodes.union(expansionInputs)
-            newProjectionNode.hidesSomeInputs = projectionNode.inputNodes.count != newProjectionNode.inputNodes.count
+            // TODO: append up to n
+            projectionNode.inputNodes = projectionNode.inputNodes.union(expansionInputs)
+            projectionNode.hidesSomeInputs = projectionNode.inputNodes.count != node.inputs.count
         case .outputs(_, let maxCount):
-            guard newProjectionNode.hidesSomeOutputs else {
+            guard projectionNode.hidesSomeOutputs else {
                 // TODO: log there is nothing to expand
                 return projection
             }
-            let previousOutputs = newProjectionNode.outputNodes
+            let previousOutputs = projectionNode.outputNodes
             let actualOutputs = node.outputs
             let hiddenOutputs = actualOutputs.subtracting(previousOutputs)
             let expansionOutputs = hiddenOutputs.prefix(maxCount)
+            extraNodes.formUnion(expansionOutputs)
 
-            // append up to n
-            newProjectionNode.outputNodes = projectionNode.outputNodes.union(expansionOutputs)
-            newProjectionNode.hidesSomeOutputs = projectionNode.outputNodes.count != newProjectionNode.outputNodes.count
+            // TODO: append up to n
+            projectionNode.outputNodes = projectionNode.outputNodes.union(expansionOutputs)
+            projectionNode.hidesSomeOutputs = projectionNode.outputNodes.count != node.outputs.count
         }
-        newProjection.nodes[node.id] = newProjectionNode
+        newProjection.nodes[node.id] = projectionNode
+
+        let allNewNodes = extraNodes.union(newProjection.nodes.keys)
+        // Add nodes that have been hoisted into the graph as an input/output
+        for extraNodeId in extraNodes {
+            guard newProjection.nodes[extraNodeId] == nil else {
+                // it is already added to the graph projection (probably some other dependency already referenced it)
+                continue
+            }
+            guard let extraNode = nodes[extraNodeId] else {
+                // consistency error
+                fatalError("Extra node is not available in the graph. Consistency error")
+            }
+            let hasAllInputs = extraNode.inputs.allSatisfy(allNewNodes.contains)
+            let hasAllOutputs = extraNode.outputs.allSatisfy(allNewNodes.contains)
+            newProjection.nodes[extraNode.id] = BuildGraphNodeProjectionNode(
+                node: extraNode.id,
+                inputNodes: [],
+                outputNodes: [],
+                hidesSomeInputs: !hasAllInputs,
+                hidesSomeOutputs: !hasAllOutputs
+            )
+        }
 
         return newProjection
     }

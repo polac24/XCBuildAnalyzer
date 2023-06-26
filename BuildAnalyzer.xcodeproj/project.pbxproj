@@ -17,6 +17,17 @@
 		4E3230232A3F7BB600118F54 /* BuildAnalyzerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230222A3F7BB600118F54 /* BuildAnalyzerKit */; };
 		4E3230262A3F7C7200118F54 /* BuildAnalyzerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230252A3F7C7200118F54 /* BuildAnalyzerKit */; };
 		4E3230282A3F7C7200118F54 /* GraphKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230272A3F7C7200118F54 /* GraphKit */; };
+		4E32302B2A40D39C00118F54 /* GraphHierarchyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */; };
+		4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302C2A40D3BD00118F54 /* GraphWebView.swift */; };
+		4E32302F2A40D3EC00118F54 /* BuildsHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302E2A40D3EC00118F54 /* BuildsHistoryView.swift */; };
+		4E3230322A40D5CE00118F54 /* GraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3230312A40D5CE00118F54 /* GraphViewModel.swift */; };
+		4E3230342A40D76A00118F54 /* GraphHierarchyElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */; };
+		4E32303A2A411AD700118F54 /* build in Resources */ = {isa = PBXBuildFile; fileRef = 4E3230362A411AD300118F54 /* build */; };
+		4E32303B2A411AD700118F54 /* node_modules in Resources */ = {isa = PBXBuildFile; fileRef = 4E3230372A411AD600118F54 /* node_modules */; };
+		4E32303C2A411AD700118F54 /* index.html in Resources */ = {isa = PBXBuildFile; fileRef = 4E3230382A411AD600118F54 /* index.html */; };
+		4E32303D2A411AD700118F54 /* img in Resources */ = {isa = PBXBuildFile; fileRef = 4E3230392A411AD700118F54 /* img */; };
+		4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */; };
+		4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +59,17 @@
 		4E32300E2A3F79F100118F54 /* BuildAnalyzerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BuildAnalyzerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E3230122A3F79F100118F54 /* BuildAnalyzerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildAnalyzerUITests.swift; sourceTree = "<group>"; };
 		4E3230142A3F79F100118F54 /* BuildAnalyzerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildAnalyzerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphHierarchyView.swift; sourceTree = "<group>"; };
+		4E32302C2A40D3BD00118F54 /* GraphWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphWebView.swift; sourceTree = "<group>"; };
+		4E32302E2A40D3EC00118F54 /* BuildsHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildsHistoryView.swift; sourceTree = "<group>"; };
+		4E3230312A40D5CE00118F54 /* GraphViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphViewModel.swift; sourceTree = "<group>"; };
+		4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphHierarchyElement.swift; sourceTree = "<group>"; };
+		4E3230362A411AD300118F54 /* build */ = {isa = PBXFileReference; lastKnownFileType = folder; path = build; sourceTree = "<group>"; };
+		4E3230372A411AD600118F54 /* node_modules */ = {isa = PBXFileReference; lastKnownFileType = folder; path = node_modules; sourceTree = "<group>"; };
+		4E3230382A411AD600118F54 /* index.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = index.html; sourceTree = "<group>"; };
+		4E3230392A411AD700118F54 /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; path = img; sourceTree = "<group>"; };
+		4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3BuildGraphProjector.swift; sourceTree = "<group>"; };
+		4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3PageResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +123,9 @@
 		4E322FF52A3F79F000118F54 /* BuildAnalyzer */ = {
 			isa = PBXGroup;
 			children = (
+				4E3230352A411AB000118F54 /* Resources */,
+				4E3230302A40D5BE00118F54 /* Models */,
+				4E3230292A40D39500118F54 /* Views */,
 				4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */,
 				4E322FF82A3F79F000118F54 /* ContentView.swift */,
 				4E322FFA2A3F79F100118F54 /* Assets.xcassets */,
@@ -133,6 +158,54 @@
 				4E3230142A3F79F100118F54 /* BuildAnalyzerUITestsLaunchTests.swift */,
 			);
 			path = BuildAnalyzerUITests;
+			sourceTree = "<group>";
+		};
+		4E3230292A40D39500118F54 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4E32303E2A411F0D00118F54 /* WebView */,
+				4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */,
+				4E32302E2A40D3EC00118F54 /* BuildsHistoryView.swift */,
+				4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4E3230302A40D5BE00118F54 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4E3230312A40D5CE00118F54 /* GraphViewModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4E3230352A411AB000118F54 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4E3230362A411AD300118F54 /* build */,
+				4E3230392A411AD700118F54 /* img */,
+				4E3230382A411AD600118F54 /* index.html */,
+				4E3230372A411AD600118F54 /* node_modules */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4E32303E2A411F0D00118F54 /* WebView */ = {
+			isa = PBXGroup;
+			children = (
+				4E36CA262A48FF550003CBA3 /* D3Projector */,
+				4E32302C2A40D3BD00118F54 /* GraphWebView.swift */,
+			);
+			path = WebView;
+			sourceTree = "<group>";
+		};
+		4E36CA262A48FF550003CBA3 /* D3Projector */ = {
+			isa = PBXGroup;
+			children = (
+				4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */,
+				4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */,
+			);
+			path = D3Projector;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -248,7 +321,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E32303D2A411AD700118F54 /* img in Resources */,
+				4E32303C2A411AD700118F54 /* index.html in Resources */,
+				4E32303A2A411AD700118F54 /* build in Resources */,
 				4E322FFE2A3F79F100118F54 /* Preview Assets.xcassets in Resources */,
+				4E32303B2A411AD700118F54 /* node_modules in Resources */,
 				4E322FFB2A3F79F100118F54 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,8 +351,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */,
+				4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */,
 				4E322FF92A3F79F000118F54 /* ContentView.swift in Sources */,
+				4E3230342A40D76A00118F54 /* GraphHierarchyElement.swift in Sources */,
+				4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */,
+				4E32302F2A40D3EC00118F54 /* BuildsHistoryView.swift in Sources */,
+				4E32302B2A40D39C00118F54 /* GraphHierarchyView.swift in Sources */,
 				4E322FF72A3F79F000118F54 /* BuildAnalyzerApp.swift in Sources */,
+				4E3230322A40D5CE00118F54 /* GraphViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

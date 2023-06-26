@@ -35,3 +35,10 @@ public class BuildGraphProjectionImpl: BuildGraphProjection {
         self.type = type
     }
 }
+
+
+extension BuildGraphProjectionImpl {
+    public static var empty: BuildGraphProjectionImpl {
+        return BuildGraphProjectionImpl(nodes: [], type: .flow)
+    }
+}

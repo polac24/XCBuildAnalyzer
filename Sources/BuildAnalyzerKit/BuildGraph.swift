@@ -16,8 +16,6 @@ public class BuildGraph: BuildGraphProtocol{
     }
 }
 
-
-
 public extension BuildGraph {
     convenience init(manifest: BuildManifest) {
         self.init(nodes: Self.buildAllNodes(commands: manifest.commands))
@@ -26,11 +24,13 @@ public extension BuildGraph {
     private static func buildAllNodes(commands: [String: BuildManifestCommand]) ->  [BuildGraphNodeId: BuildGraphNode] {
         var visitedNodes: [BuildGraphNodeId: BuildGraphNode] = [:]
         for (commandName, command) in commands {
+            let commandNodeId = BuildGraphNodeId(nodeName: commandName)
+
             // inputs
             let inputIds = (command.inputs ?? []).map { inputName in
                 let nodeId = BuildGraphNodeId(nodeName: inputName)
                 var input = visitedNodes[nodeId, default: .buildEmpty(id: nodeId, name: inputName)]
-                input.outputs = input.outputs.union([nodeId])
+                input.outputs = input.outputs.union([commandNodeId])
                 visitedNodes[nodeId] = input
                 return nodeId
             }
@@ -39,22 +39,21 @@ public extension BuildGraph {
             let outputIds = (command.outputs ?? []).map { outputName in
                 let nodeId = BuildGraphNodeId(nodeName: outputName)
                 var output = visitedNodes[nodeId, default: .buildEmpty(id: nodeId, name: outputName)]
-                output.inputs = output.inputs.union([nodeId])
+                output.inputs = output.inputs.union([commandNodeId])
                 visitedNodes[nodeId] = output
                 return nodeId
             }
 
             // actual command node
-            let nodeId = BuildGraphNodeId(nodeName: commandName)
             let node = BuildGraphNode(
-                id: nodeId,
+                id: commandNodeId,
                 tool: command.tool,
                 name: commandName,
                 properties: properties(from: command),
                 inputs: Set(inputIds),
                 outputs: Set(outputIds)
             )
-            visitedNodes[nodeId] = node
+            visitedNodes[commandNodeId] = node
         }
         return visitedNodes
     }

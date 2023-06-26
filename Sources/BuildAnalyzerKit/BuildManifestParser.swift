@@ -19,7 +19,7 @@ public struct BuildManifestCommand: Codable, Hashable {
 }
 
 public struct BuildManifestClient: Codable {
-    let version: String
+    let version: Int
     let name: String
 }
 
@@ -49,7 +49,11 @@ public class BuildManifestParser {
     }
 
     public func process(_ path: String) throws -> BuildManifest {
-        let data = try Data(contentsOf: URL(fileURLWithPath: path))
+        return try process(URL(fileURLWithPath: path))
+    }
+
+    public func process(_ url: URL) throws -> BuildManifest {
+        let data = try Data(contentsOf: url)
         return try decoder.decode(BuildManifest.self, from: data)
     }
 }

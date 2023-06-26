@@ -8,13 +8,18 @@
 import Foundation
 
 
-public struct BuildGraphNodeProjectionNode {
-    let node: BuildGraphNodeId
-    var inputNodes: Set<BuildGraphNodeId>
-    var outputNodes: Set<BuildGraphNodeId>
+public struct BuildGraphNodeProjectionNode: Comparable {
+    // An opinionated sorting order - it is used to have a deterministic projection in the UI
+    public static func < (lhs: BuildGraphNodeProjectionNode, rhs: BuildGraphNodeProjectionNode) -> Bool {
+        lhs.node.id < rhs.node.id
+    }
 
-    var hidesSomeInputs: Bool
-    var hidesSomeOutputs: Bool
+    public let node: BuildGraphNodeId
+    public internal(set) var inputNodes: Set<BuildGraphNodeId>
+    public internal(set) var outputNodes: Set<BuildGraphNodeId>
+
+    public internal(set) var hidesSomeInputs: Bool
+    public internal(set) var hidesSomeOutputs: Bool
 
     public init(
         node: BuildGraphNodeId,
