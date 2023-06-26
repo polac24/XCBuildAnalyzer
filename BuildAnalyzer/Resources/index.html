@@ -447,10 +447,13 @@
 
   const fromNative = (msg) => {
       //log('from native: \"' + msg+"\"")
-      console.log(graphviz)
-      graphviz
-      //.resetZoom()
-          .renderDot("strict digraph {edge [arrowhead=vee,color=\"#A8A8A8\",margin=0];\nnode [shape=plaintext,style=filled,fontcolor=\"#E4E5E5\",color=\"#00000000\",margin=0,padding=0];\nrankdir=\"LR\";bgcolor=\"#404040\"\n" + msg+"\n}", startApp)
+      //console.log(graphviz)
+      var message = JSON.parse(msg)
+      var g = graphviz
+      if (message.option.reset) {
+          g = g.resetZoom()
+      }
+          g.renderDot("strict digraph {edge [arrowhead=vee,color=\"#A8A8A8\",margin=0];\nnode [shape=plaintext,style=filled,fontcolor=\"#E4E5E5\",color=\"#00000000\",margin=0,padding=0];\nrankdir=\"LR\";bgcolor=\"#404040\"\n" + message.graph+"\n}", startApp)
       //webkit.messageHandlers.bridge.onMessage = this
     //log(graphviz)
     return ""

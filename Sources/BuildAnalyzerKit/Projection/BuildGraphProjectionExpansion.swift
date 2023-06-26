@@ -25,3 +25,14 @@ extension BuildGraphProjectionExpansion {
         }
     }
 }
+
+extension BuildGraphProjectionExpansion {
+    var levelDirection: Int {
+        switch self {
+        case .inputs:
+            return -1
+        case .outputs:
+            return 1
+        }
+    }
+}

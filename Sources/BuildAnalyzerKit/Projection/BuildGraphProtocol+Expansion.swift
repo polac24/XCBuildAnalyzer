@@ -15,13 +15,10 @@ public extension BuildGraphProtocol {
             return projection
         }
         var newProjection = projection
-        var projectionNode = projection.nodes[expansion.nodeId, default: BuildGraphNodeProjectionNode(
-            node: node.id,
-            inputNodes: [],
-            outputNodes: [],
-            hidesSomeInputs: true,
-            hidesSomeOutputs: true)
-        ]
+        guard var projectionNode = projection.nodes[expansion.nodeId] else {
+            print("The expansion node is not visible: consistency error")
+            return projection
+        }
         var extraNodes = Set<BuildGraphNodeId>()
         switch expansion {
         case .inputs(_, let maxCount):
@@ -35,7 +32,7 @@ public extension BuildGraphProtocol {
             let expansionInputs = hiddenInputs.prefix(maxCount)
             extraNodes.formUnion(expansionInputs)
 
-            // TODO: append up to n
+            // TODO: append up to n elements only
             projectionNode.inputNodes = projectionNode.inputNodes.union(expansionInputs)
             projectionNode.hidesSomeInputs = projectionNode.inputNodes.count != node.inputs.count
         case .outputs(_, let maxCount):
@@ -73,7 +70,8 @@ public extension BuildGraphProtocol {
                 inputNodes: [],
                 outputNodes: [],
                 hidesSomeInputs: !hasAllInputs,
-                hidesSomeOutputs: !hasAllOutputs
+                hidesSomeOutputs: !hasAllOutputs,
+                level: projectionNode.level + expansion.levelDirection
             )
         }
 
