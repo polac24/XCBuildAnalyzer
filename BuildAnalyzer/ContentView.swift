@@ -18,31 +18,36 @@ func buildGraph(url: URL) throws -> BuildGraph {
 }
 
 struct ContentView: View {
-    @State private var selection: String?
+    @Binding var selection: String?
+    @Binding var focus: String?
     @State private var search: String = ""
-    let graph: BuildGraph
-//    @State var projection: BuildGraphProjection
-    @State var filteredItems: [GraphHierarchyElement]
-//    @State var action: GraphViewRequestAction?
+    @Binding var graph: BuildGraph
+    @Binding var graphUrl: URL?
     let web: GraphWebView
 
     var body: some View {
         VStack {
-            BuildsHistoryView()
-
             GeometryReader { geometry in
                 HSplitView{
                     GraphHierarchyView(
                         selection: $selection,
-                        graph: graph
+                        graph: graph,
+                        search: $search,
+                        focus: $focus
                     )
-                    //GraphWebView(graph: graph, selection: $selection)
 
-                    web.layoutPriority(4).onChange(of: selection) { newValue in
+                    web.layoutPriority(1000).onChange(of: focus) { newValue in
                         web.controller.select(nodeId: newValue)
+                    }.onChange(of: graph) { newValue in
+                        web.controller.reset()
+                        selection = nil
                     }.onAppear {
                         web.controller.coordinator.setBinding($selection)
                     }
+
+                    GraphItemView (
+                        item: graph.nodes[BuildGraphNodeId(id: selection ?? "")], focus: $focus, globalSelection: $selection
+                    ).frame(minWidth: 200)
                 }
             }
         }
@@ -52,14 +57,7 @@ struct ContentView: View {
                 let _ = provider.loadObject(ofClass: URL.self) { object, error in
                     if let url = object {
                         print("url: \(url)")
-
-                        // TODO: recognize type (.xcodeproj, manifest.json, .xcbuilddata)
-                        do {
-                            let graph = try buildGraph(url: url)
-                            print(graph.nodes)
-                        } catch {
-                            print(error)
-                        }
+                        graphUrl = url
                     }
                 }
                 return true

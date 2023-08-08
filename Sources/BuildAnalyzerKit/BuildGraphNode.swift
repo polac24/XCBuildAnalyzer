@@ -10,7 +10,7 @@ import Foundation
 
 /// The node identifier in the the Build Graph context
 /// (Now, the id represents the command id string)
-public struct BuildGraphNodeId: Hashable {
+public struct BuildGraphNodeId: Hashable, Equatable {
     public let id: String
 
     public init(id: String) {
@@ -24,7 +24,7 @@ public struct BuildGraphEdge {
 }
 public typealias BuildGraphEdgeId = String
 
-public struct BuildGraphNode: Hashable {
+public struct BuildGraphNode: Hashable, Equatable {
     public enum Kind: Hashable, Comparable {
         // Group of the kind - used to group all nodes in the Hierarchy outline (left pane)
         public enum Group: Comparable {
@@ -67,6 +67,15 @@ public struct BuildGraphNode: Hashable {
     public let description: String? = nil
     public let roots: [String]? = nil
     public let expectedOutputs: [String]? = nil
+
+    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>) {
+        self.id = id
+        self.tool = tool
+        self.name = name
+        self.properties = properties
+        self.inputs = inputs
+        self.outputs = outputs
+    }
 
     public var kind: Kind {
         do {

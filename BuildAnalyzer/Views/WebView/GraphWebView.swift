@@ -17,25 +17,55 @@ enum GraphViewRequestAction {
     case set(id: BuildGraphNodeId)
 }
 
+class MyWK: WKWebView {
+    @Binding var graphUrl: URL?
+
+    init(graphUrl: Binding<URL?>, configuration: WKWebViewConfiguration) {
+        self._graphUrl = graphUrl
+        super.init(frame: .zero, configuration: configuration)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        guard let object = sender.draggingPasteboard.readObjects(forClasses: [NSURL.self], options: nil), object.count > 0 else {
+            return false
+        }
+        let objects = object as! [URL]
+        print(objects)
+        // Take only the first one
+        graphUrl = objects[0]
+        return true
+    }
+
+    override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation {
+        return .copy
+    }
+}
+
 class GraphWebViewController {
     let coordinator: GraphWebViewCoordinator
     var webView: WKWebView
-    private let graph: BuildGraph
+    @Binding private var graph: BuildGraph
 //    private let messageFactory = D3GraphMessageFactory()
     private(set) var created: Bool = false
     private var currentProjection: BuildGraphProjection
     private var projector: D3BuildGraphProjector
+    @Binding var selection: String?
 
-    init(graph: BuildGraph) {
-        self.graph = graph
+    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<String?>) {
+        self._graph = graph
+        self._selection = selection
         let userContentController = WKUserContentController()
-        let coordinator = GraphWebViewCoordinator(graph: graph)
+        let coordinator = GraphWebViewCoordinator()
         userContentController.add(coordinator, name: "bridge")
 
         let configuration = WKWebViewConfiguration()
         configuration.userContentController = userContentController
 
-        let _wkwebview = WKWebView(frame: .zero, configuration: configuration)
+        let _wkwebview = MyWK(graphUrl: graphUrl, configuration: configuration)
         _wkwebview.isInspectable = true
         self.webView = _wkwebview
         self.coordinator = coordinator
@@ -49,9 +79,14 @@ class GraphWebViewController {
     }
 
 
+    func reset() {
+        currentProjection = BuildGraphProjectionImpl(nodes: [], type: .flow)
+        refreshProjection(fresh: true)
+    }
+
     func select(nodeId: String?) {
         guard let nodeId = nodeId else {
-            // TODO: maybe should be deselected
+            // TOOD: consider reset view, but now leave it as is as the user might just unselect by mistake
             return
         }
         let bgNodeId = BuildGraphNodeId(id: nodeId)
@@ -82,8 +117,12 @@ class GraphWebViewController {
             }
             currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
             refreshProjection(fresh: false)
-        case .set:
-            refreshProjection(fresh: true)
+        case .set(let id):
+            guard let nodeId = projector.d3GraphNodesMapping[id.id] else {
+                print("unknown d3 node. Probably the starting phase")
+                return
+            }
+            selection = nodeId.id
             break
         }
     }
@@ -108,22 +147,22 @@ class GraphWebViewController {
 
 class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
 //    @Binding var action: GraphViewRequestAction?
-    private var graph: BuildGraph
+//    private var graph: BuildGraph
     private var selection: Binding<String?>?
     var onChange: ((GraphViewRequestAction) -> ())?
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
-    init(graph: BuildGraph) {
+//    init(graph: BuildGraph) {
 //        self._action = action
-        self.graph = graph
+//        self.graph = graph
 //        self.onChange = onChange
 //        self._selection = Binding(get: {
 //            selection.wrappedValue
 //        }, set: { nodeId in
 //            print(nodeId)
 //        })
-    }
+//    }
 
     func setBinding(_ selection: Binding<String?>) {
         self.selection = Binding(get: {
@@ -186,14 +225,12 @@ struct GraphWebView: NSViewRepresentable {
     let controller: GraphWebViewController
 //    @Binding var projection: BuildGraphProjection
 //    @Binding var action: GraphViewRequestAction?
-//    var graph: BuildGraph
 //    @Binding var selection: String?
 
-    init(graph: BuildGraph) {
-        let controller = GraphWebViewController(graph: graph)
+    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<String?>) {
+        let controller = GraphWebViewController(graph: graph, graphUrl: graphUrl, selection: selection)
 
         self.controller = controller
-//        self.graph = graph
 //        self._selection = selection
 //        self._selection = Binding(get: {
 //            selection.wrappedValue
@@ -213,6 +250,7 @@ struct GraphWebView: NSViewRepresentable {
         return controller.webView
     }
 
+
     func updateNSView(_ webView: WKWebView, context: Context) {
         guard let path: String = Bundle.main.path(forResource: "index", ofType: "html") else { return }
         let localHTMLUrl = URL(fileURLWithPath: path, isDirectory: false)
@@ -220,6 +258,15 @@ struct GraphWebView: NSViewRepresentable {
         let resources = localHTMLUrl.deletingLastPathComponent()
         webView.loadFileURL(localHTMLUrl, allowingReadAccessTo: resources)
     }
+
+//    func makeNSView(context: Context) -> NSView {
+//        let v = NSView(frame: .init(x: 0, y: 0, width: 100, height: 100))
+//        v.layer?.backgroundColor = .init(red: 1, green: 0, blue: 0, alpha: 0)
+//        return v
+//    }
+//    func updateNSView(_ nsView: NSView, context: Context) {
+//
+//    }
 }
 
 

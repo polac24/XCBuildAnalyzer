@@ -28,6 +28,7 @@
 		4E32303D2A411AD700118F54 /* img in Resources */ = {isa = PBXBuildFile; fileRef = 4E3230392A411AD700118F54 /* img */; };
 		4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */; };
 		4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */; };
+		4E5C0C652A82898500170E3E /* GraphItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5C0C642A82898500170E3E /* GraphItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +71,7 @@
 		4E3230392A411AD700118F54 /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; path = img; sourceTree = "<group>"; };
 		4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3BuildGraphProjector.swift; sourceTree = "<group>"; };
 		4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3PageResponse.swift; sourceTree = "<group>"; };
+		4E5C0C642A82898500170E3E /* GraphItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +169,7 @@
 				4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */,
 				4E32302E2A40D3EC00118F54 /* BuildsHistoryView.swift */,
 				4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */,
+				4E5C0C642A82898500170E3E /* GraphItemView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -359,6 +362,7 @@
 				4E32302F2A40D3EC00118F54 /* BuildsHistoryView.swift in Sources */,
 				4E32302B2A40D39C00118F54 /* GraphHierarchyView.swift in Sources */,
 				4E322FF72A3F79F000118F54 /* BuildAnalyzerApp.swift in Sources */,
+				4E5C0C652A82898500170E3E /* GraphItemView.swift in Sources */,
 				4E3230322A40D5CE00118F54 /* GraphViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

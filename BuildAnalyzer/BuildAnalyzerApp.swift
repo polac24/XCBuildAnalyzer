@@ -10,13 +10,25 @@ import BuildAnalyzerKit
 
 @main
 struct BuildAnalyzerApp: App {
+    @State private var graph: BuildGraph = try! buildGraph(url: URL(fileURLWithPath:  "/Users/bartosz/Development/BuildG/DerivedData/BuildG/Build/Intermediates.noindex/XCBuildData/7f298f85ff0a7d4faa437918d6a25d9f.xcbuilddata/manifest.json")) //BuildGraph(nodes: [:])
+    @State private var selection: String?
+    @State private var focus: String?
     var body: some Scene {
         WindowGroup {
-            let url = URL(fileURLWithPath:  "/Users/bartosz/Development/BuildG/DerivedData/BuildG/Build/Intermediates.noindex/XCBuildData/7f298f85ff0a7d4faa437918d6a25d9f.xcbuilddata/manifest.json")
-            let graph = try! buildGraph(url: url)
-            let webView = GraphWebView(graph: graph)
+            var url: URL?
+            let graphUrl = Binding(get: { url }, set: { newUrl in
+                // TODO: recognize type (.xcodeproj, manifest.json, .xcbuilddata)
+                guard let newUrlValue = newUrl, let newGraph = try? buildGraph(url: newUrlValue) else {
+                    return
+                }
+                DispatchQueue.main.async {
+                    url = newUrlValue
+                    graph = newGraph
+                }
+            })
+            let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection)
             ContentView(
-                graph: graph, filteredItems: [], web:webView
+                selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, web: webView
             )
         }
     }

@@ -11,7 +11,7 @@
 <script src="./node_modules/@hpcc-js/wasm/dist/graphviz.umd.js"  type="javascript/worker"></script>
 <script src="./build/d3-graphviz.js"></script>
 </head>
-<body>
+<body style="background: transparent; margin: 0; background:#404040">
 
 
 <div id="graph" style="text-align: center;background:#404040;cursor: default;"></div>
@@ -170,6 +170,7 @@
   N55 -> N56;
   N45 [label="aaaa", tooltip="AAAAAAA", url="http://www.google.com"];
     }`;
+    dotSrc = ``;
 
     var graphviz = d3.select("#graph").graphviz()
         //.engine('circo')

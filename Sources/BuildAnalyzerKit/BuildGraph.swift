@@ -8,10 +8,16 @@
 import Foundation
 
 
-public class BuildGraph: BuildGraphProtocol{
+public class BuildGraph: BuildGraphProtocol, Equatable{
+    public static func == (lhs: BuildGraph, rhs: BuildGraph) -> Bool {
+        lhs.nodes == rhs.nodes
+    }
+    
     public private(set) var nodes: [BuildGraphNodeId: BuildGraphNode]
+    // Hacky
+    public var storage: [Any]? = nil
 
-    init(nodes: [BuildGraphNodeId: BuildGraphNode]) {
+    public init(nodes: [BuildGraphNodeId: BuildGraphNode]) {
         self.nodes = nodes
     }
 }

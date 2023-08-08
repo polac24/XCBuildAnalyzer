@@ -13,41 +13,40 @@ import BuildAnalyzerKit
 
 struct GraphHierarchyView: View {
     @Binding var selection: String?
+    @Binding var focus: String?
     // Actual search (throttled)
-    @State var search: String = ""
-    private var graph:  BuildGraph
+    @Binding var search: String
+    var graph: BuildGraph
 
     @State private var searchRaw: String = ""
     let searchTextPublisher = PassthroughSubject<String, Never>()
     private let items: [GraphHierarchyElement]
-    @Binding private var filteredItems: [GraphHierarchyElement]
 
     init(
         selection: Binding<String?>,
-        graph: BuildGraph
+        graph: BuildGraph,
+        search: Binding<String>,
+        focus: Binding<String?>
     ) {
         self._selection = selection
         self.graph = graph
-        let allItems = GraphHierarchyView.build(graph.nodes)
-        items = allItems
-        _filteredItems = Binding.constant(allItems)
-        filteredItems = allItems
+        self._search = search
+        self._focus = focus
+        items = graph.build().compactMap {$0.filter(search.wrappedValue)}
     }
 
     var body: some View {
         VStack {
-            List(filteredItems, children: \.items, selection: $selection) { row in
+            List(graph.build().compactMap {$0.filter(search)}, children: \.items, selection: $selection) { row in
                 Text(row.name)
                     .help(row.name)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .onTapGesture {
+                        focus = row.id
                         selection = row.id
                     }
             }
-            Text("\(filteredItems.count)")
-            Text("\(items.count)")
-            Text("\(graph.nodes.count)")
             TextField("Search", text: $searchRaw)
                 .padding(5)
                 .onChange(of: searchRaw) { searchText in
@@ -58,18 +57,20 @@ struct GraphHierarchyView: View {
                         .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
                 ) { debouncedSearchText in
                     self.search = debouncedSearchText
-                    self.filteredItems = items.compactMap {$0.filter(debouncedSearchText)}
                 }
         }
     }
 }
 
-private extension GraphHierarchyView {
+extension BuildGraph {
     // TODO: extract to a separate class
-    static func build(_ graph: [BuildGraphNodeId: BuildGraphNode]) -> [GraphHierarchyElement] {
+    func build() -> [GraphHierarchyElement] {
+        if let s = storage as? [GraphHierarchyElement] {
+            return s
+        }
         var types = [BuildGraphNode.Kind.Group: [(BuildGraphNodeId, BuildGraphNode)]]()
 
-        for (nodeId, node) in graph {
+        for (nodeId, node) in nodes {
             let kind = node.kind.group
             var newArray = types[kind, default: []]
             newArray.append((nodeId, node))
@@ -83,6 +84,7 @@ private extension GraphHierarchyView {
             }
             result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind)", items: elements))
         }
+        storage = result
         return result
     }
 }
