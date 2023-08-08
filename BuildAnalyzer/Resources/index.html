@@ -112,7 +112,64 @@
       "lpromoter",
     ];
 
-    var dotSrc = ``;
+    var dotSrc = `strict digraph {
+        N0 -> N1;
+  N2 -> N1;
+  N1 -> N3;
+  N4 -> N5;
+  N6 -> N5;
+  N7 -> N5;
+  N8 -> N5;
+  N9 -> N5;
+  N10 -> N5;
+  N11 -> N5;
+  N5 -> N2;
+  N12 -> N13;
+  N14 -> N13;
+  N13 -> N15;
+  N16 -> N17;
+  N18 -> N17;
+  N17 -> N19;
+  N20 -> N21;
+  N2 -> N21;
+  N22 -> N21;
+  N23 -> N21;
+  N21 -> N24;
+  N25 -> N26;
+  N27 -> N26;
+  N28 -> N26;
+  N29 -> N26;
+  N30 -> N26;
+  N31 -> N26;
+  N32 -> N26;
+  N33 -> N26;
+  N34 -> N26;
+  N35 -> N26;
+  N36 -> N26;
+  N37 -> N26;
+  N38 -> N26;
+  N39 -> N26;
+  N40 -> N26;
+  N41 -> N26;
+  N26 -> N4;
+  N42 -> N43;
+  N25 -> N43;
+  N43 -> N44;
+  N45 -> N8;
+  N45 -> N46;
+  N47 -> N48;
+  N49 -> N48;
+  N2 -> N48;
+  N50 -> N48;
+  N48 -> N51;
+  N52 -> N53;
+  N54 -> N53;
+  N42 -> N53;
+  N25 -> N53;
+  N53 -> N29;
+  N55 -> N56;
+  N45 [label="aaaa", tooltip="AAAAAAA", url="http://www.google.com"];
+    }`;
 
     var graphviz = d3.select("#graph").graphviz()
         //.engine('circo')
@@ -389,24 +446,12 @@
   // to receive messages from native
 
   const fromNative = (msg) => {
-      console.log('from native: \"' + msg+"\"")
+      //log('from native: \"' + msg+"\"")
       //console.log(graphviz)
-
       var message = JSON.parse(msg)
-      // Manual serialization
-      /*var tokens = msg.split("|")
-      var message = {
-          "option": {
-              "reset": JSON.parse(tokens[0])
-          },
-          "graph": tokens[1]
-      }*/
       var g = graphviz
       if (message.option.reset) {
-          try {
-              // reset best effort- if the graph doesn't exists - do nothing
-              g = g.resetZoom()
-            } catch(err) {}
+          g = g.resetZoom()
       }
           g.renderDot("strict digraph {edge [arrowhead=vee,color=\"#A8A8A8\",margin=0];\nnode [shape=plaintext,style=filled,fontcolor=\"#E4E5E5\",color=\"#00000000\",margin=0,padding=0];\nrankdir=\"LR\";bgcolor=\"#404040\"\n" + message.graph+"\n}", startApp)
       //webkit.messageHandlers.bridge.onMessage = this
@@ -417,11 +462,18 @@
 
     // terrible hack
     setInterval(() => {
-        console.log('delayed')
+        //log('delayed')
         webkit.messageHandlers.bridge.onMessage = fromNative
     }, "100");
     //webkit.messageHandlers.bridge.onMessage = fromNative
 
+  document.querySelector('button').addEventListener('click', () => {
+      webkit.messageHandlers.bridge.onMessage = fromNative
+
+    //log(typeof webkit.messageHandlers.bridge.postMessage)
+    // send messages to native
+    //webkit.messageHandlers.bridge.postMessage('{"msg": "hello?","id": ' + Date.now() + '}')
+  })
 
     /*window.addEventListener("load", (event) => {
         log('loaded')
