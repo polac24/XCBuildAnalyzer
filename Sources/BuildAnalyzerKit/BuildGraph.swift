@@ -11,7 +11,7 @@ import Foundation
 public class BuildGraph: BuildGraphProtocol{
     public private(set) var nodes: [BuildGraphNodeId: BuildGraphNode]
 
-    init(nodes: [BuildGraphNodeId: BuildGraphNode]) {
+    public init(nodes: [BuildGraphNodeId: BuildGraphNode]) {
         self.nodes = nodes
     }
 }

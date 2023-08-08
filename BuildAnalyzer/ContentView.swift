@@ -9,6 +9,22 @@ import SwiftUI
 import GraphKit
 import BuildAnalyzerKit
 
+class BuildGraphModel : ObservableObject {
+    var buildGraph: BuildGraph
+
+    init(buildGraph: BuildGraph) {
+        self.buildGraph = buildGraph
+    }
+
+    func change(_ buildGraph : BuildGraph) {
+        self.buildGraph = buildGraph
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
+    }
+}
+
+
 
 func buildGraph(url: URL) throws -> BuildGraph {
     let parser = BuildManifestParser()
@@ -18,35 +34,43 @@ func buildGraph(url: URL) throws -> BuildGraph {
 }
 
 struct ContentView: View {
-    @State private var selection: String?
-    @State private var search: String = ""
-    let graph: BuildGraph
-//    @State var projection: BuildGraphProjection
-    @State var filteredItems: [GraphHierarchyElement]
-//    @State var action: GraphViewRequestAction?
-    let web: GraphWebView
+    @Binding private var selection: String?
+    @State private var readFile: URL?
+//    @Binding var graph: BuildGraph
+    private var web: GraphWebView
+    var graph: BuildGraph
 
+
+
+    init(selection: Binding<String?>) {
+//        self.selection = nil
+//        self.readFile = nil
+        let graph = try! buildGraph(url: URL(fileURLWithPath:  "/Users/bartosz/Development/BuildG/DerivedData/BuildG/Build/Intermediates.noindex/XCBuildData/7f298f85ff0a7d4faa437918d6a25d9f.xcbuilddata/manifest.json"))
+        let web = GraphWebView(graph: graph)
+        //        self.graph = graph
+        self.web = web
+        self.graph = graph
+        _selection = selection
+    }
+    
     var body: some View {
         VStack {
             BuildsHistoryView()
-
             GeometryReader { geometry in
                 HSplitView{
                     GraphHierarchyView(
                         selection: $selection,
                         graph: graph
-                    )
-                    //GraphWebView(graph: graph, selection: $selection)
+                    ).frame(minWidth: 200, maxWidth: 400)
 
-                    web.layoutPriority(4).onChange(of: selection) { newValue in
+                    web.layoutPriority(10).onChange(of: selection) { newValue in
                         web.controller.select(nodeId: newValue)
-                    }.onAppear {
+                    }.onAppear() {
                         web.controller.coordinator.setBinding($selection)
                     }
                 }
             }
         }
-        .padding()
         .onDrop(of: [.fileURL], isTargeted: nil) { providers in
             if let provider = providers.first(where: { $0.canLoadObject(ofClass: URL.self) } ) {
                 let _ = provider.loadObject(ofClass: URL.self) { object, error in
@@ -54,18 +78,25 @@ struct ContentView: View {
                         print("url: \(url)")
 
                         // TODO: recognize type (.xcodeproj, manifest.json, .xcbuilddata)
-                        do {
-                            let graph = try buildGraph(url: url)
-                            print(graph.nodes)
-                        } catch {
-                            print(error)
-                        }
+                            //        self.graph = graph
+//                        self.graph = try! buildGraph(url: url)
+                            DispatchQueue.main.async {
+                                do {
+//                                    readFile = url
+//                                    self.web = GraphWebView(graph: graph)
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        //                            graph.change(bg)
+
+//                            print(graph.nodes)
                     }
                 }
                 return true
             }
             return false
-        }
+        }//.id(readFile?.absoluteString ?? "")
     }
 }
 
