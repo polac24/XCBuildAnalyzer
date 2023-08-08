@@ -63,18 +63,19 @@ public struct BuildGraphNode: Hashable, Equatable {
     public var properties: [Property: PropertyValue]
     public var inputs: Set<BuildGraphNodeId>
     public var outputs: Set<BuildGraphNodeId>
-    public let env: [String: String]? = nil
+    public let env: [String: String]?
     public let description: String? = nil
     public let roots: [String]? = nil
     public let expectedOutputs: [String]? = nil
 
-    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>) {
+    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, env: [String: String]?) {
         self.id = id
         self.tool = tool
         self.name = name
         self.properties = properties
         self.inputs = inputs
         self.outputs = outputs
+        self.env = env
     }
 
     public var kind: Kind {
@@ -112,7 +113,8 @@ extension BuildGraphNode {
             name: name,
             properties: [:],
             inputs: [],
-            outputs: []
+            outputs: [],
+            env: [:]
         )
     }
 }

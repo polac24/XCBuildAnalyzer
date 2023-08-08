@@ -57,7 +57,8 @@ public extension BuildGraph {
                 name: commandName,
                 properties: properties(from: command),
                 inputs: Set(inputIds),
-                outputs: Set(outputIds)
+                outputs: Set(outputIds),
+                env: command.env
             )
             visitedNodes[commandNodeId] = node
         }

@@ -51,6 +51,61 @@ struct GraphItemDetailsSetView: View {
     }
 }
 
+
+struct GraphItemDetailEnvView: View {
+    let title: String
+    private let tableValues: [EnvValue]
+
+    private struct EnvValue: Identifiable {
+        var id: String
+        var value: String
+    }
+
+    init(title: String, values: [String: String]?){
+        self.title = title
+        self.tableValues = values?.map { key, value in
+            EnvValue(id: key, value: value)
+        } ?? []
+    }
+
+    var body: some View {
+        if !tableValues.isEmpty {
+            VStack{
+                Divider()
+                Text(title).bold()
+                Table(tableValues) {
+                    TableColumn("Key", value: \.id)
+                    TableColumn("Value", value: \.value)
+                }
+                .tableStyle(.bordered(alternatesRowBackgrounds: false))
+                .frame(minHeight: 100, maxHeight: 200)
+                }
+        }
+    }
+}
+
+extension String: Identifiable {
+    public var id: String {
+        self
+    }
+}
+
+struct GraphItemDetailView: View {
+    let title: String
+    let value: String?
+
+    var body: some View {
+        if let v = value, !v.isEmpty {
+            Divider()
+            Text(title).bold()
+            Text(v)
+        }
+    }
+}
+
+                    
+
+
 struct GraphItemView: View {
     let item: BuildGraphNode?
     @State var selection: BuildGraphNodeId? = nil
@@ -61,8 +116,9 @@ struct GraphItemView: View {
         VStack {
             ScrollView{
                 Text("Details")
-                let itemTitle = item?.name ?? ""
-                Text(itemTitle).bold()
+                GraphItemDetailView(title: "Tool", value: item?.tool)
+//                GraphItemDetailView(title: "Kind", value: item?.kind)
+                GraphItemDetailEnvView(title: "ENVs", values: item?.env)
                 GraphItemDetailsSetView(title: "Inputs", items: item?.inputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
                 GraphItemDetailsSetView(title: "Outputs", items: item?.outputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
 
@@ -73,10 +129,16 @@ struct GraphItemView: View {
 
 struct GraphItemView_Previews: PreviewProvider {
     static var previews: some View {
-        GraphItemView(item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [], outputs: []), focus: .constant(nil), globalSelection: .constant(nil))
+        GraphItemView(item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [], outputs: [], env: ["a":"B", "c": "Sssss"]), focus: .constant(nil), globalSelection: .constant(nil))
     }
 }
 
+
+struct GraphItemDetailEnvView_Previews: PreviewProvider {
+    static var previews: some View {
+        GraphItemDetailEnvView(title: "AAA", values: ["a":"s"])
+    }
+}
 
 extension BuildGraphNodeId: Identifiable {
 

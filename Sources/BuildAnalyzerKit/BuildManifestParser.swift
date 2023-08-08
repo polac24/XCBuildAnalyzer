@@ -16,6 +16,7 @@ public struct BuildManifestCommand: Codable, Hashable {
     var outputs: [String]?
     var expectedOutputs: [String]?
     var roots: [String]?
+    var env: [String: String]?
 }
 
 public struct BuildManifestClient: Codable {

@@ -47,7 +47,7 @@ extension BuildGraphProjectionImpl {
     public convenience init(startingNode: BuildGraphNodeId) {
         // Assume the node hides something by default. Otherwise, it wouldn't be considered in the appending flow
         self.init(nodes: [
-            .init(node: startingNode, inputNodes: [], outputNodes: [], hidesSomeInputs: true, hidesSomeOutputs: true, level: 0)
+            .init(node: startingNode, inputNodes: [], outputNodes: [], hidesSomeInputs: true, hidesSomeOutputs: true, level: 0, highlighted: false)
         ], type: .flow)
     }
 }

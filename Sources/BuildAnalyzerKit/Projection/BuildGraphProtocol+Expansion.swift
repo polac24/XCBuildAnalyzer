@@ -71,10 +71,20 @@ public extension BuildGraphProtocol {
                 outputNodes: [],
                 hidesSomeInputs: !hasAllInputs,
                 hidesSomeOutputs: !hasAllOutputs,
-                level: projectionNode.level + expansion.levelDirection
+                level: projectionNode.level + expansion.levelDirection,
+                highlighted: false
             )
         }
 
+        return newProjection
+    }
+
+    func highlight(nodeId: BuildGraphNodeId?, projection: BuildGraphProjection) -> BuildGraphProjection {
+        var newProjection = projection
+
+        for (key, _) in projection.nodes {
+            newProjection.nodes[key]?.highlighted = key == nodeId
+        }
         return newProjection
     }
 }

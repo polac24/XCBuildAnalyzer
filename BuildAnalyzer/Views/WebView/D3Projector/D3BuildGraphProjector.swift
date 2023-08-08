@@ -76,11 +76,11 @@ class D3BuildGraphProjector: BuildGraphProjector {
 //        var visitedNodes = Set<DotNode>()
 
         for node in projection.nodes.values.sorted(by: {$0.node.id < $1.node.id} ){
-            let isSelected = false
+            let isSelected = node.highlighted
             let d3Reference = buildGraphNodesMapping[node.node]!
             // TODO: refactor to a better abstraction
             let label = buildTableLabel(node: node)
-            result.append("  \(d3Reference) [tooltip=\"\(node.node.id)\", xlabel=\"\", xlp=\"-20,-20\", label=\(label)\(isSelected ? ",color=\"#394662\"" : "")];")
+            result.append("  \(d3Reference) [tooltip=\"\(node.node.id)\", xlabel=\"\", xlp=\"-20,-20\", label=\(label)\(isSelected ? ",color=\"#394662\"" : ",color=\"#404040\"")];")
         }
 
         for edge in edges.sorted(by: {$0.0 == $1.0 ? ($0.1 < $1.1 ) : $0.0 < $1.0 }) {

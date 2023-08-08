@@ -101,6 +101,13 @@ class GraphWebViewController {
         refreshProjection(fresh: false)
     }
 
+    func highlight(nodeId: String?) {
+        let bgNodeId = nodeId.map(BuildGraphNodeId.init(id:))
+
+        currentProjection = graph.highlight(nodeId: bgNodeId, projection: currentProjection)
+        refreshProjection(fresh: false)
+    }
+
     func onUiAction(action: GraphViewRequestAction) {
         switch action {
         case .extendIn(id: let d3Node):
@@ -123,6 +130,7 @@ class GraphWebViewController {
                 return
             }
             selection = nodeId.id
+            highlight(nodeId: nodeId.id)
             break
         }
     }

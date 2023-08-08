@@ -21,6 +21,7 @@ public struct BuildGraphNodeProjectionNode: Comparable {
     public internal(set) var hidesSomeInputs: Bool
     public internal(set) var hidesSomeOutputs: Bool
     public internal(set) var level: Int
+    public internal(set) var highlighted: Bool
 
     public init(
         node: BuildGraphNodeId,
@@ -28,7 +29,8 @@ public struct BuildGraphNodeProjectionNode: Comparable {
         outputNodes: Set<BuildGraphNodeId>,
         hidesSomeInputs: Bool,
         hidesSomeOutputs: Bool,
-        level: Int
+        level: Int,
+        highlighted: Bool
     ) {
         self.node = node
         self.inputNodes = inputNodes
@@ -36,6 +38,7 @@ public struct BuildGraphNodeProjectionNode: Comparable {
         self.hidesSomeInputs = hidesSomeInputs
         self.hidesSomeOutputs = hidesSomeOutputs
         self.level = level
+        self.highlighted = highlighted
     }
 }
 
@@ -48,7 +51,8 @@ extension BuildGraphNodeProjectionNode {
             outputNodes: [],
             hidesSomeInputs: !node.inputs.isEmpty,
             hidesSomeOutputs: !node.outputs.isEmpty,
-            level: 0
+            level: 0,
+            highlighted: false
         )
     }
 }
