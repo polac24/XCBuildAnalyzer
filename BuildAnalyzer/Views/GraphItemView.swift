@@ -116,6 +116,7 @@ struct GraphItemView: View {
         VStack {
             ScrollView{
                 Text("Details")
+                Text(item?.id.id ?? "")
                 GraphItemDetailView(title: "Tool", value: item?.tool)
 //                GraphItemDetailView(title: "Kind", value: item?.kind)
                 GraphItemDetailEnvView(title: "ENVs", values: item?.env)

@@ -13,6 +13,8 @@ public enum BuildGraphProjectionExpansion {
     case inputs(of: BuildGraphNodeId, count: Int = 100)
     /// user wants to see more outputs of a node
     case outputs(of: BuildGraphNodeId, count: Int = 100)
+    /// include a cycle of nodes
+    case cycle(of: BuildGraphNodeId, cycle: [BuildGraphNodeId])
 }
 
 extension BuildGraphProjectionExpansion {
@@ -21,6 +23,8 @@ extension BuildGraphProjectionExpansion {
         case .inputs(of: let nodeId, _):
             return nodeId
         case .outputs(of: let nodeId, _):
+            return nodeId
+        case .cycle(of: let nodeId, _):
             return nodeId
         }
     }
@@ -33,6 +37,8 @@ extension BuildGraphProjectionExpansion {
             return -1
         case .outputs:
             return 1
+        case .cycle:
+            return -2
         }
     }
 }

@@ -49,6 +49,10 @@ public extension BuildGraphProtocol {
             // TODO: append up to n
             projectionNode.outputNodes = projectionNode.outputNodes.union(expansionOutputs)
             projectionNode.hidesSomeOutputs = projectionNode.outputNodes.count != node.outputs.count
+        case .cycle(_, let cycle):
+            // TODO
+            extraNodes = Set(cycle)
+            break
         }
         newProjection.nodes[node.id] = projectionNode
 
@@ -67,8 +71,8 @@ public extension BuildGraphProtocol {
             let hasAllOutputs = extraNode.outputs.allSatisfy(allNewNodes.contains)
             newProjection.nodes[extraNode.id] = BuildGraphNodeProjectionNode(
                 node: extraNode.id,
-                inputNodes: [],
-                outputNodes: [],
+                inputNodes: extraNode.inputs.filter({allNewNodes.contains($0)}),
+                outputNodes: extraNode.outputs.filter({allNewNodes.contains($0)}),
                 hidesSomeInputs: !hasAllInputs,
                 hidesSomeOutputs: !hasAllOutputs,
                 level: projectionNode.level + expansion.levelDirection,

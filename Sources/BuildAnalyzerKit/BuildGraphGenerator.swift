@@ -19,6 +19,6 @@ public class FileGraphGenerator: BuildGraphGenerator {
     }
 
     public func build() throws -> BuildGraphProtocol {
-        return BuildGraph(nodes: [:])
+        return BuildGraph(nodes: [:], cycles: [])
     }
 }

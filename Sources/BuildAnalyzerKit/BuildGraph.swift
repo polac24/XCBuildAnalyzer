@@ -14,17 +14,26 @@ public class BuildGraph: BuildGraphProtocol, Equatable{
     }
     
     public private(set) var nodes: [BuildGraphNodeId: BuildGraphNode]
+    public private(set) var cycles: [[BuildGraphNodeId]]
+    public private(set) lazy var cycleNodes: [BuildGraphNodeId] = {
+        return cycles.flatMap({$0})
+    }()
     // Hacky
     public var storage: [Any]? = nil
 
-    public init(nodes: [BuildGraphNodeId: BuildGraphNode]) {
+    public init(nodes: [BuildGraphNodeId: BuildGraphNode], cycles: [[BuildGraphNodeId]]) {
         self.nodes = nodes
+        self.cycles = cycles
     }
 }
 
 public extension BuildGraph {
     convenience init(manifest: BuildManifest) {
-        self.init(nodes: Self.buildAllNodes(commands: manifest.commands))
+        let nodes = Self.buildAllNodes(commands: manifest.commands)
+        self.init(
+            nodes: nodes,
+            cycles: Self.findCycles(nodes)
+        )
     }
 
     private static func buildAllNodes(commands: [String: BuildManifestCommand]) ->  [BuildGraphNodeId: BuildGraphNode] {
@@ -63,6 +72,52 @@ public extension BuildGraph {
             visitedNodes[commandNodeId] = node
         }
         return visitedNodes
+    }
+
+    private static func findCycles(_ nodes: [BuildGraphNodeId: BuildGraphNode]) -> [[BuildGraphNodeId]] {
+        struct State {
+            var node: String
+            var history: [String]
+            var historySet: Set<String>
+        }
+        // optimized
+        var nodeDeps: [String: [String]] = [:]
+        for node in nodes {
+            nodeDeps[node.key.id] = node.value.inputs.map(\.id)
+        }
+        var cycles: [[String]] = []
+        var allNodesToTraverse = Set(nodes.keys.map(\.id))
+        while let startingNode = allNodesToTraverse.first {
+            var paths: [String?] = [startingNode]
+            var history: [String] = []
+            while let pathOptional = paths.popLast() {
+                guard let path = pathOptional else {
+                    let rem = history.removeLast()
+                    allNodesToTraverse.remove(rem)
+                    continue
+                }
+                let node = path
+                if !allNodesToTraverse.contains(node) {
+                    // we don't need to check it once again
+                    continue
+                }
+                if let index = history.firstIndex(of: node) {
+                    // we found a cycle
+                    // TODO: trim the history to the cycle only
+                    cycles.append(history[index...] + [node])
+                    allNodesToTraverse.remove(node)
+                    continue
+                }
+                history.append(node)
+                paths.append(nil)
+                for dependencyNode in nodeDeps[node]! {
+                    paths.append(dependencyNode)
+                }
+            }
+        }
+        return cycles.map { cycle in
+            cycle.map(BuildGraphNodeId.init(id:))
+        }
     }
 
     private static func properties(from: BuildManifestCommand) -> [BuildGraphNode.Property: BuildGraphNode.PropertyValue] {

@@ -38,14 +38,16 @@ struct GraphHierarchyView: View {
     var body: some View {
         VStack {
             List(graph.build().compactMap {$0.filter(search)}, children: \.items, selection: $selection) { row in
-                Text(row.name)
-                    .help(row.name)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .onTapGesture {
-                        focus = row.id
-                        selection = row.id
-                    }
+                HStack {
+                    Text(row.name)
+                        .help(row.name)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    if let info = row.info { Text(info).help("Exists in a cycle") }
+                }.onTapGesture {
+                    focus = row.id
+                    selection = row.id
+                }
             }
             TextField("Search", text: $searchRaw)
                 .padding(5)
@@ -80,9 +82,10 @@ extension BuildGraph {
         var result = [GraphHierarchyElement]()
         for (kind, elements) in types.sorted(by: {$0.key < $1.key} ) {
             let elements = elements.map { element in
-                GraphHierarchyElement(id: element.0.id, name: element.1.name)
+                let in_cycle = cycleNodes.contains(element.0)
+                return GraphHierarchyElement(id: element.0.id, name: element.1.name, info: in_cycle ? "⚠️" : nil)
             }
-            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind)", items: elements))
+            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind)", info: nil, items: elements))
         }
         storage = result
         return result

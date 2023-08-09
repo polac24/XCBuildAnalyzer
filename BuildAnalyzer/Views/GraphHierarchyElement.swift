@@ -10,6 +10,7 @@ import Foundation
 struct GraphHierarchyElement: Identifiable, Equatable {
     let id: String
     let name: String
+    let info: String?
     var items: [GraphHierarchyElement]?
 }
 
@@ -24,7 +25,7 @@ extension GraphHierarchyElement {
         var include = false
         var children = (items ?? []).compactMap( { $0.filter(string) })
         if children.count > 0 || name.contains(string) {
-            return .init(id: name, name: name, items: children)
+            return .init(id: name, name: name, info: info, items: children)
         }
         return nil
     }

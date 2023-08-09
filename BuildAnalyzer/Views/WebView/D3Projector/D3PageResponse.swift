@@ -27,4 +27,6 @@ struct D3PageRequest: Encodable {
     var option: Option
     /// D3 graphiz content
     var graph: String
+    /// extra config of a digraph
+    var extra: String
 }
