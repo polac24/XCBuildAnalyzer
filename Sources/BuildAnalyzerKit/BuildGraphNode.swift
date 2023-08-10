@@ -18,11 +18,17 @@ public struct BuildGraphNodeId: Hashable, Equatable {
     }
 }
 
-// TODO: May be useful if a user wants to "select" an edge (not a case for now)
-public struct BuildGraphEdge {
-    let id: BuildGraphEdgeId
-}
+// Not in use for now
 public typealias BuildGraphEdgeId = String
+public struct BuildGraphEdge: Hashable, Equatable {
+    let source: BuildGraphNodeId
+    let destination: BuildGraphNodeId
+
+    public init(source: BuildGraphNodeId, destination: BuildGraphNodeId) {
+        self.source = source
+        self.destination = destination
+    }
+}
 
 public struct BuildGraphNode: Hashable, Equatable {
     public enum Kind: Hashable, Comparable {

@@ -15,9 +15,7 @@ public class BuildGraph: BuildGraphProtocol, Equatable{
     
     public private(set) var nodes: [BuildGraphNodeId: BuildGraphNode]
     public private(set) var cycles: [[BuildGraphNodeId]]
-    public private(set) lazy var cycleNodes: [BuildGraphNodeId] = {
-        return cycles.flatMap({$0})
-    }()
+
     // Hacky
     public var storage: [Any]? = nil
 

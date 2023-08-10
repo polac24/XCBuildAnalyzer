@@ -19,6 +19,24 @@
 
     'use strict';
 
+    const fromNative = (msg) => {
+        //log('from native: \"' + msg+"\"")
+        console.log((msg))
+        var message = JSON.parse(msg)
+        var g = graphviz
+        if (message.option.reset) {
+            g = g.resetZoom()
+        }
+            g.renderDot("strict digraph {edge [arrowhead=vee,color=\"#A8A8A8\",margin=0];"+message.extra+"node [shape=plaintext,style=filled,fontcolor=\"#E4E5E5\",color=\"#00000000\",margin=0,padding=0];\nrankdir=\"LR\";bgcolor=\"#404040\"\n" + message.graph+"\n}", startApp)
+        //webkit.messageHandlers.bridge.onMessage = this
+      //log(graphviz)
+      return ""
+    }
+
+    webkit.messageHandlers.bridge.onMessage = fromNative
+
+
+
     var margin = 20; // to avoid scrollbars
 
     var isDrawingEdge = false;
@@ -446,35 +464,22 @@
   }
   // to receive messages from native
 
-  const fromNative = (msg) => {
-      //log('from native: \"' + msg+"\"")
-      //console.log((msg))
-      var message = JSON.parse(msg)
-      var g = graphviz
-      if (message.option.reset) {
-          g = g.resetZoom()
-      }
-          g.renderDot("strict digraph {edge [arrowhead=vee,color=\"#A8A8A8\",margin=0];"+message.extra+"node [shape=plaintext,style=filled,fontcolor=\"#E4E5E5\",color=\"#00000000\",margin=0,padding=0];\nrankdir=\"LR\";bgcolor=\"#404040\"\n" + message.graph+"\n}", startApp)
-      //webkit.messageHandlers.bridge.onMessage = this
-    //log(graphviz)
-    return ""
-  }
-
 
     // terrible hack
-    setInterval(() => {
-        //log('delayed')
-        webkit.messageHandlers.bridge.onMessage = fromNative
-    }, "100");
+    setTimeout(() => {
+        //console.log('delayed')
+        //webkit.messageHandlers.bridge.onMessage = fromNative
+    }, "2000");
+
     //webkit.messageHandlers.bridge.onMessage = fromNative
 
-  document.querySelector('button').addEventListener('click', () => {
-      webkit.messageHandlers.bridge.onMessage = fromNative
+  //document.querySelector('button').addEventListener('click', () => {
+  //    webkit.messageHandlers.bridge.onMessage = fromNative
 
     //log(typeof webkit.messageHandlers.bridge.postMessage)
     // send messages to native
     //webkit.messageHandlers.bridge.postMessage('{"msg": "hello?","id": ' + Date.now() + '}')
-  })
+  //})
 
     /*window.addEventListener("load", (event) => {
         log('loaded')

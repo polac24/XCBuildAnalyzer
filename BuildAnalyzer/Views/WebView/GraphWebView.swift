@@ -70,7 +70,7 @@ class GraphWebViewController {
         self.webView = _wkwebview
         self.coordinator = coordinator
 
-        let currentProjection = BuildGraphProjectionImpl.init(nodes: [], type: .circular)
+        let currentProjection = BuildGraphProjectionImpl.init(nodes: [], type: .circular, highlightedEdges: [])
         projector = D3BuildGraphProjector(projection: currentProjection)
         self.currentProjection = currentProjection
         coordinator.onChange = { [weak self] action in
@@ -80,7 +80,7 @@ class GraphWebViewController {
 
 
     func reset() {
-        currentProjection = BuildGraphProjectionImpl(nodes: [], type: .circular
+        currentProjection = BuildGraphProjectionImpl(nodes: [], type: .circular, highlightedEdges: []
         )
         refreshProjection(fresh: true)
     }
@@ -101,10 +101,14 @@ class GraphWebViewController {
         currentProjection = graph.expand(projection: newProjection, with: .inputs(of: bgNodeId ))
         currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
         if graph.cycleNodes.contains(bgNodeId) {
+            let cycle = graph.cycles.first!
             // TODO
             currentProjection = graph.expand(projection: currentProjection, with: .cycle(of: bgNodeId, cycle: graph.cycles.first! ))
+            currentProjection.highlightedEdges = Set(zip(cycle, cycle.dropFirst()).map { source, dest in
+                BuildGraphEdge(source: source, destination: dest)
+            })
         }
-        refreshProjection(fresh: false, cycle: graph.cycleNodes.contains(bgNodeId))
+        refreshProjection(fresh: false)
     }
 
     func highlight(nodeId: String?) {
@@ -143,15 +147,16 @@ class GraphWebViewController {
 
     /// Rebuilds the projector and sends an event to JS
     /// - Parameter fresh: if true, a completely new view is generated and previous labels don't have to be reused
-    private func refreshProjection(fresh: Bool, cycle: Bool = false) {
+    private func refreshProjection(fresh: Bool) {
         // Experiment - reuse the same "Mapping" to reuse similar nodes and limit number of animations when new node IDs (dot-specific)
         // are assigned
         let startingMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = fresh ? [:] : projector.buildGraphNodesMapping
         projector = D3BuildGraphProjector(projection: currentProjection, buildGrapNodesMapping: startingMapping)
         let d3String = projector.build()
         do {
-            let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: cycle ? "layout=circo;" : "")
+            let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: "")
             let requestString = try coordinator.generateMessage(request).replacingOccurrences(of: "\"", with: "\\\"")//.replacingOccurrences(of: "\\\\\"", with: "\\\"")
+            webView.evaluateJavaScript("webkit.messageHandlers.bridge.onMessage = fromNative")
             webView.evaluateJavaScript("webkit.messageHandlers.bridge.onMessage('\(requestString)')")
         } catch {
             print("Error in sending from Swift \(error)")

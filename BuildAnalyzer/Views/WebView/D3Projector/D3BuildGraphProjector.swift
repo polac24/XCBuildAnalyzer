@@ -34,6 +34,7 @@ class D3BuildGraphProjector: BuildGraphProjector {
         d3GraphNodesMapping = buildGrapNodesMapping.reduce(into: [:], { partialResult, next in
             partialResult[next.value] = next.key
         })
+
     }
 
     func build() -> String  {
@@ -88,10 +89,11 @@ class D3BuildGraphProjector: BuildGraphProjector {
             let destination = buildGraphNodesMapping[edge.1.node]!
             // testing which format is better in UI
             let inverted = false
+            let selected = projection.highlightedEdges.contains(.init(source: edge.1.node, destination: edge.0.node))
             if inverted {
                 result.append("  \(destination) -> \(source);")
             } else {
-                result.append("  \(source) -> \(destination);")
+                result.append("  \(source) -> \(destination) \(selected ? "[color=red]" :"" );")
             }
         }
         return result.joined(separator: " ")
