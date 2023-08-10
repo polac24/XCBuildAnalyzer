@@ -17,6 +17,7 @@ struct GraphHierarchyView: View {
     // Actual search (throttled)
     @Binding var search: String
     var graph: BuildGraph
+    @State var viewSelection: String?
 
     @State private var searchRaw: String = ""
     let searchTextPublisher = PassthroughSubject<String, Never>()
@@ -28,6 +29,7 @@ struct GraphHierarchyView: View {
         search: Binding<String>,
         focus: Binding<String?>
     ) {
+        viewSelection = selection.wrappedValue
         self._selection = selection
         self.graph = graph
         self._search = search
@@ -37,16 +39,17 @@ struct GraphHierarchyView: View {
 
     var body: some View {
         VStack {
-            List(graph.build().compactMap {$0.filter(search)}, children: \.items, selection: $selection) { row in
+            List(graph.build().compactMap {$0.filter(search)}, children: \.items, selection: $viewSelection) { row in
                 HStack {
                     Text(row.name)
                         .help(row.name)
                         .lineLimit(1)
                         .truncationMode(.middle)
+                        .onChange(of: viewSelection) { v in
+                            focus = v
+                            selection = v
+                        }
                     if let info = row.info { Text(info).help("Exists in a cycle") }
-                }.onTapGesture {
-                    focus = row.id
-                    selection = row.id
                 }
             }
             TextField("Search", text: $searchRaw)
