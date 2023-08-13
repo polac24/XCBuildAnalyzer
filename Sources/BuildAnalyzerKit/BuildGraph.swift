@@ -7,6 +7,10 @@
 
 import Foundation
 
+// It might be a Date in the future, if the starting date can be fetched
+public typealias BuildTiming = Double
+public typealias BuildInterval = (start: BuildTiming, end: BuildTiming)
+
 
 public class BuildGraph: BuildGraphProtocol, Equatable{
     public static func == (lhs: BuildGraph, rhs: BuildGraph) -> Bool {
@@ -15,30 +19,34 @@ public class BuildGraph: BuildGraphProtocol, Equatable{
     
     public private(set) var nodes: [BuildGraphNodeId: BuildGraphNode]
     public private(set) var cycles: [[BuildGraphNodeId]]
+    // Might not be needed
+    public private(set) var buildInterval: BuildInterval?
 
     // Hacky
     public var storage: [Any]? = nil
 
-    public init(nodes: [BuildGraphNodeId: BuildGraphNode], cycles: [[BuildGraphNodeId]]) {
+    public init(nodes: [BuildGraphNodeId: BuildGraphNode], cycles: [[BuildGraphNodeId]], buildInterval: BuildInterval?) {
         self.nodes = nodes
         self.cycles = cycles
+        self.buildInterval = buildInterval
     }
 }
 
 public extension BuildGraph {
-    convenience init(manifest: BuildManifest) {
-        let nodes = Self.buildAllNodes(commands: manifest.commands)
+    convenience init(manifest: BuildManifest, timings: [BuildGraphNodeTimingId: BuildGraphNodeTiming] = [:]) {
+        let nodes = Self.buildAllNodes(commands: manifest.commands, timings: timings)
         self.init(
             nodes: nodes,
-            cycles: Self.findCycles(nodes)
+            cycles: Self.findCycles(nodes),
+            buildInterval: Self.buildInterval(timings: timings)
         )
     }
-
-    private static func buildAllNodes(commands: [String: BuildManifestCommand]) ->  [BuildGraphNodeId: BuildGraphNode] {
+    
+    private static func buildAllNodes(commands: [String: BuildManifestCommand], timings: [BuildGraphNodeTimingId: BuildGraphNodeTiming] ) ->  [BuildGraphNodeId: BuildGraphNode] {
         var visitedNodes: [BuildGraphNodeId: BuildGraphNode] = [:]
         for (commandName, command) in commands {
             let commandNodeId = BuildGraphNodeId(nodeName: commandName)
-
+            
             // inputs
             let inputIds = (command.inputs ?? []).map { inputName in
                 let nodeId = BuildGraphNodeId(nodeName: inputName)
@@ -47,7 +55,7 @@ public extension BuildGraph {
                 visitedNodes[nodeId] = input
                 return nodeId
             }
-
+            
             // outputs
             let outputIds = (command.outputs ?? []).map { outputName in
                 let nodeId = BuildGraphNodeId(nodeName: outputName)
@@ -56,7 +64,7 @@ public extension BuildGraph {
                 visitedNodes[nodeId] = output
                 return nodeId
             }
-
+            
             // actual command node
             let node = BuildGraphNode(
                 id: commandNodeId,
@@ -65,13 +73,14 @@ public extension BuildGraph {
                 properties: properties(from: command),
                 inputs: Set(inputIds),
                 outputs: Set(outputIds),
-                env: command.env
+                env: command.env,
+                timing: timings[commandNodeId]
             )
             visitedNodes[commandNodeId] = node
         }
         return visitedNodes
     }
-
+    
     private static func findCycles(_ nodes: [BuildGraphNodeId: BuildGraphNode]) -> [[BuildGraphNodeId]] {
         struct State {
             var node: String
@@ -117,9 +126,16 @@ public extension BuildGraph {
             cycle.map(BuildGraphNodeId.init(id:))
         }
     }
-
+    
     private static func properties(from: BuildManifestCommand) -> [BuildGraphNode.Property: BuildGraphNode.PropertyValue] {
         // Implement reading all required and optional fields
         return [:]
+    }
+    
+    private static func buildInterval(timings: [BuildGraphNodeTimingId: BuildGraphNodeTiming]) -> BuildInterval? {
+        guard let max = timings.values.map(\.end).max(), let min = timings.values.map(\.start).min() else {
+            return nil
+        }
+        return (start: min, end: max)
     }
 }

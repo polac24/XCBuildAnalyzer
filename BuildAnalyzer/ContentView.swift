@@ -14,7 +14,12 @@ func buildGraph(url: URL) throws -> BuildGraph {
     let parser = BuildManifestParser()
     let manifest = try parser.process(url)
 
-    return BuildGraph(manifest: manifest)
+    let dbUrl = url.deletingLastPathComponent()
+        .deletingLastPathComponent()
+        .appendingPathComponent("build.db")
+    let timingReader = BuildGraphNodeTimingSqlReader(file: dbUrl)
+    let timing = try timingReader.read()
+    return BuildGraph(manifest: manifest, timings: timing)
 }
 
 struct ContentView: View {

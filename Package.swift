@@ -21,10 +21,13 @@ let package = Package(
         .library(
             name: "GraphKit",
             targets: ["GraphKit"]),
+    ], dependencies: [
+        .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.14.1")
     ],
     targets: [
         .target(
             name: "BuildAnalyzerKit",
+            dependencies: [.product(name: "SQLite", package: "SQLite.swift")],
             // -enable-bare-slash-regex becomes
             swiftSettings: swiftSettings
         ),

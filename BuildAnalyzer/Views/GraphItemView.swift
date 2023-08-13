@@ -22,14 +22,9 @@ struct GraphItemRelationItem: View {
             .lineLimit(selection == element ? nil : 1)
             .truncationMode(.middle)
             .onTapGesture {
-                if selection == element {
-                    // double selection
-                    focus = element.id
-                    globalSelection = element.id
-                }
                 selection = element
             }
-            .background(selection == element ? Color.blue : Color.clear)
+            .background(selection == element ? Color.gray : Color.clear)
     }
 }
 
@@ -43,10 +38,20 @@ struct GraphItemDetailsSetView: View {
     var body: some View {
         if (items?.count ?? 0) > 0 {
             Divider()
-            Text(title).bold()
-            ForEach(Array(items ?? [])){ element in
-                GraphItemRelationItem(selection: $selection, focus: $focus, globalSelection: $globalSelection, element: element)
+            Table(Array(items ?? [])){
+                TableColumn(title){ element in
+                    Text(element.id)
+                        .padding(.horizontal, 5)
+                        .help(element.id)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }.width(min: 1000)
             }
+            .frame(minHeight: 200)
+
+//            ForEach(Array(items ?? [])){ element in
+//                GraphItemRelationItem(selection: $selection, focus: $focus, globalSelection: $globalSelection, element: element)
+//            }
         }
     }
 }
@@ -103,6 +108,22 @@ struct GraphItemDetailView: View {
     }
 }
 
+struct GraphItemTimingView: View {
+    let title: String
+    let timing: BuildGraphNodeTiming?
+
+    var body: some View {
+        if let v = timing {
+            Divider()
+            Text(title).bold()
+            Text("\(v.duration) s")
+            Text("Start: \(v.start)")
+            Text("End: \(v.end)")
+            ProgressView(value: v.percentage ) { Text("\(Int(v.percentage * 100))% progress") }
+        }
+    }
+}
+
                     
 
 
@@ -122,15 +143,16 @@ struct GraphItemView: View {
                 GraphItemDetailEnvView(title: "ENVs", values: item?.env)
                 GraphItemDetailsSetView(title: "Inputs", items: item?.inputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
                 GraphItemDetailsSetView(title: "Outputs", items: item?.outputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
-
             }
+            Divider()
+            GraphItemTimingView(title: "Timing", timing: item?.timing)
         }
     }
 }
 
 struct GraphItemView_Previews: PreviewProvider {
     static var previews: some View {
-        GraphItemView(item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [], outputs: [], env: ["a":"B", "c": "Sssss"]), focus: .constant(nil), globalSelection: .constant(nil))
+        GraphItemView(item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [.init(id: "1111eee1sdajiodjasi doaijd oasidj aoidj osaidj asoidj asoidj aosidja sdioaj oasidj oaijd oiasjd oaisjd oaisjd oaisjd oaisjd oiasjd iasjod ij oi")], outputs: [], env: ["a":"B", "c": "Sssss"], timing: nil), focus: .constant(nil), globalSelection: .constant(nil))
     }
 }
 

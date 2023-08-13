@@ -73,8 +73,9 @@ public struct BuildGraphNode: Hashable, Equatable {
     public let description: String? = nil
     public let roots: [String]? = nil
     public let expectedOutputs: [String]? = nil
+    public let timing: BuildGraphNodeTiming?
 
-    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, env: [String: String]?) {
+    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, env: [String: String]?, timing: BuildGraphNodeTiming?) {
         self.id = id
         self.tool = tool
         self.name = name
@@ -82,6 +83,7 @@ public struct BuildGraphNode: Hashable, Equatable {
         self.inputs = inputs
         self.outputs = outputs
         self.env = env
+        self.timing = timing
     }
 
     public var kind: Kind {
@@ -120,7 +122,8 @@ extension BuildGraphNode {
             properties: [:],
             inputs: [],
             outputs: [],
-            env: [:]
+            env: [:],
+            timing: nil
         )
     }
 }
