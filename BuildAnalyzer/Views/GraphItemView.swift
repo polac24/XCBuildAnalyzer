@@ -114,12 +114,16 @@ struct GraphItemTimingView: View {
 
     var body: some View {
         if let v = timing {
-            Divider()
-            Text(title).bold()
-            Text("\(v.duration) s")
-            Text("Start: \(v.start)")
-            Text("End: \(v.end)")
-            ProgressView(value: v.percentage ) { Text("\(Int(v.percentage * 100))% progress") }
+            VStack(alignment: .leading) {
+                Divider()
+                VStack(alignment: .leading) {
+                    Text(title).bold()
+                    Text("\(String(format: "%.2f", v.duration)) s")
+                    Text("Start: \(String(format: "%.2f", v.start))s")
+                    Text("End: \(String(format: "%.2f", v.end))")
+                }.padding(.leading)
+                ProgressView(value: v.percentage ) { Text("\(Int(v.percentage * 100))% progress") }
+            }
         }
     }
 }
@@ -139,12 +143,11 @@ struct GraphItemView: View {
                 Text("Details")
                 Text(item?.id.id ?? "")
                 GraphItemDetailView(title: "Tool", value: item?.tool)
-//                GraphItemDetailView(title: "Kind", value: item?.kind)
                 GraphItemDetailEnvView(title: "ENVs", values: item?.env)
                 GraphItemDetailsSetView(title: "Inputs", items: item?.inputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
                 GraphItemDetailsSetView(title: "Outputs", items: item?.outputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
             }
-            Divider()
+            Spacer()
             GraphItemTimingView(title: "Timing", timing: item?.timing)
         }
     }
@@ -152,7 +155,7 @@ struct GraphItemView: View {
 
 struct GraphItemView_Previews: PreviewProvider {
     static var previews: some View {
-        GraphItemView(item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [.init(id: "1111eee1sdajiodjasi doaijd oasidj aoidj osaidj asoidj asoidj aosidja sdioaj oasidj oaijd oiasjd oaisjd oaisjd oaisjd oaisjd oiasjd iasjod ij oi")], outputs: [], env: ["a":"B", "c": "Sssss"], timing: nil), focus: .constant(nil), globalSelection: .constant(nil))
+        GraphItemView(item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [.init(id: "1111eee1sdajiodjasi doaijd oasidj aoidj osaidj asoidj asoidj aosidja sdioaj oasidj oaijd oiasjd oaisjd oaisjd oaisjd oaisjd oiasjd iasjod ij oi")], outputs: [], env: ["a":"B", "c": "Sssss"], timing: BuildGraphNodeTiming(node: .init(id:"id"), start: 20.3221, end: 100.2, percentage: 0.5)), focus: .constant(nil), globalSelection: .constant(nil))
     }
 }
 

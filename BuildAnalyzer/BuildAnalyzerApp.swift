@@ -18,7 +18,7 @@ struct BuildAnalyzerApp: App {
             var url: URL?
             let graphUrl = Binding(get: { url }, set: { newUrl in
                 // TODO: recognize type (.xcodeproj, manifest.json, .xcbuilddata)
-                guard let newUrlValue = newUrl, let newGraph = try? buildGraph(url: newUrlValue) else {
+                guard let newUrlValue = ManifestLoader().findManifest(newUrl), let newGraph = try? buildGraph(url: newUrlValue) else {
                     return
                 }
                 DispatchQueue.main.async {

@@ -1,5 +1,4 @@
 import XCTest
-@testable import BuildAnalyzer
 
 final class BuildAnalyzerTests: XCTestCase {
     func testExample() throws {

@@ -20,6 +20,13 @@ public struct BuildGraphNodeTiming: Hashable {
     public let end: Double
     // 0 - 100% of the start in the entire build
     public let percentage: Double
+
+    public init(node: BuildGraphNodeTimingId, start: Double, end: Double, percentage: Double) {
+        self.node = node
+        self.start = start
+        self.end = end
+        self.percentage = percentage
+    }
 }
 
 public extension BuildGraphNodeTiming {
