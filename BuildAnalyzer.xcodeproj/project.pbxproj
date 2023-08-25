@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4E20C0F92A98DA4500C08953 /* ManifestLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20C0F82A98DA4500C08953 /* ManifestLoader.swift */; };
 		4E322FF72A3F79F000118F54 /* BuildAnalyzerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */; };
 		4E322FF92A3F79F000118F54 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E322FF82A3F79F000118F54 /* ContentView.swift */; };
 		4E322FFB2A3F79F100118F54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E322FFA2A3F79F100118F54 /* Assets.xcassets */; };
@@ -15,7 +16,7 @@
 		4E3230132A3F79F100118F54 /* BuildAnalyzerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3230122A3F79F100118F54 /* BuildAnalyzerUITests.swift */; };
 		4E3230152A3F79F100118F54 /* BuildAnalyzerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3230142A3F79F100118F54 /* BuildAnalyzerUITestsLaunchTests.swift */; };
 		4E3230232A3F7BB600118F54 /* BuildAnalyzerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230222A3F7BB600118F54 /* BuildAnalyzerKit */; };
-		4E3230262A3F7C7200118F54 /* BuildAnalyzerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230252A3F7C7200118F54 /* BuildAnalyzerKit */; };
+		4E3230262A3F7C7200118F54 /* XcodeHasher in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230252A3F7C7200118F54 /* XcodeHasher */; };
 		4E3230282A3F7C7200118F54 /* GraphKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230272A3F7C7200118F54 /* GraphKit */; };
 		4E32302B2A40D39C00118F54 /* GraphHierarchyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */; };
 		4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302C2A40D3BD00118F54 /* GraphWebView.swift */; };
@@ -49,6 +50,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4E20C0F82A98DA4500C08953 /* ManifestLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManifestLoader.swift; sourceTree = "<group>"; };
 		4E322FF32A3F79F000118F54 /* BuildAnalyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuildAnalyzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildAnalyzerApp.swift; sourceTree = "<group>"; };
 		4E322FF82A3F79F000118F54 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -79,7 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E3230262A3F7C7200118F54 /* BuildAnalyzerKit in Frameworks */,
+				4E3230262A3F7C7200118F54 /* XcodeHasher in Frameworks */,
 				4E3230232A3F7BB600118F54 /* BuildAnalyzerKit in Frameworks */,
 				4E3230282A3F7C7200118F54 /* GraphKit in Frameworks */,
 			);
@@ -102,6 +104,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4E20C0F72A98DA4500C08953 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				4E20C0F82A98DA4500C08953 /* ManifestLoader.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		4E322FEA2A3F79F000118F54 = {
 			isa = PBXGroup;
 			children = (
@@ -125,6 +135,7 @@
 		4E322FF52A3F79F000118F54 /* BuildAnalyzer */ = {
 			isa = PBXGroup;
 			children = (
+				4E20C0F72A98DA4500C08953 /* Utils */,
 				4E3230352A411AB000118F54 /* Resources */,
 				4E3230302A40D5BE00118F54 /* Models */,
 				4E3230292A40D39500118F54 /* Views */,
@@ -229,7 +240,7 @@
 			name = BuildAnalyzer;
 			packageProductDependencies = (
 				4E3230222A3F7BB600118F54 /* BuildAnalyzerKit */,
-				4E3230252A3F7C7200118F54 /* BuildAnalyzerKit */,
+				4E3230252A3F7C7200118F54 /* XcodeHasher */,
 				4E3230272A3F7C7200118F54 /* GraphKit */,
 			);
 			productName = BuildAnalyzer;
@@ -355,6 +366,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */,
+				4E20C0F92A98DA4500C08953 /* ManifestLoader.swift in Sources */,
 				4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */,
 				4E322FF92A3F79F000118F54 /* ContentView.swift in Sources */,
 				4E3230342A40D76A00118F54 /* GraphHierarchyElement.swift in Sources */,
@@ -693,9 +705,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = BuildAnalyzerKit;
 		};
-		4E3230252A3F7C7200118F54 /* BuildAnalyzerKit */ = {
+		4E3230252A3F7C7200118F54 /* XcodeHasher */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = BuildAnalyzerKit;
+			productName = XcodeHasher;
 		};
 		4E3230272A3F7C7200118F54 /* GraphKit */ = {
 			isa = XCSwiftPackageProductDependency;
