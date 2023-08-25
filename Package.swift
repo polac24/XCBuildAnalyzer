@@ -21,8 +21,12 @@ let package = Package(
         .library(
             name: "GraphKit",
             targets: ["GraphKit"]),
+        .library(
+            name: "XcodeHasher",
+            targets: ["XcodeHasher"]),
     ], dependencies: [
-        .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.14.1")
+        .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.14.1"),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.3")
     ],
     targets: [
         .target(
@@ -39,5 +43,9 @@ let package = Package(
         .testTarget(
             name: "GraphKitTests",
             dependencies: ["GraphKit"]),
+        .target(
+            name:"XcodeHasher",
+            dependencies: ["CryptoSwift"]
+        ),
     ]
 )
