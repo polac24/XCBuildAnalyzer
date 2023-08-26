@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4E20C0F92A98DA4500C08953 /* ManifestLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20C0F82A98DA4500C08953 /* ManifestLoader.swift */; };
 		4E322FF72A3F79F000118F54 /* BuildAnalyzerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */; };
 		4E322FF92A3F79F000118F54 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E322FF82A3F79F000118F54 /* ContentView.swift */; };
 		4E322FFB2A3F79F100118F54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E322FFA2A3F79F100118F54 /* Assets.xcassets */; };
@@ -30,6 +29,7 @@
 		4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */; };
 		4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */; };
 		4E5C0C652A82898500170E3E /* GraphItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5C0C642A82898500170E3E /* GraphItemView.swift */; };
+		4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +50,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4E20C0F82A98DA4500C08953 /* ManifestLoader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ManifestLoader.swift; sourceTree = "<group>"; };
 		4E322FF32A3F79F000118F54 /* BuildAnalyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuildAnalyzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildAnalyzerApp.swift; sourceTree = "<group>"; };
 		4E322FF82A3F79F000118F54 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -74,6 +73,7 @@
 		4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3BuildGraphProjector.swift; sourceTree = "<group>"; };
 		4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3PageResponse.swift; sourceTree = "<group>"; };
 		4E5C0C642A82898500170E3E /* GraphItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphItemView.swift; sourceTree = "<group>"; };
+		4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestFinder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +107,7 @@
 		4E20C0F72A98DA4500C08953 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				4E20C0F82A98DA4500C08953 /* ManifestLoader.swift */,
+				4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -366,7 +366,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */,
-				4E20C0F92A98DA4500C08953 /* ManifestLoader.swift in Sources */,
+				4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */,
 				4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */,
 				4E322FF92A3F79F000118F54 /* ContentView.swift in Sources */,
 				4E3230342A40D76A00118F54 /* GraphHierarchyElement.swift in Sources */,

@@ -30,6 +30,10 @@ public class BuildGraph: BuildGraphProtocol, Equatable{
         self.cycles = cycles
         self.buildInterval = buildInterval
     }
+
+    public static var empty: BuildGraph = {
+        return BuildGraph.init(nodes: [:], cycles: [], buildInterval: nil)
+    }()
 }
 
 public extension BuildGraph {
