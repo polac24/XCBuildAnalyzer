@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!--    <script src="https://d3js.org/d3.v5.min.js"></script>-->
-<!--    <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>-->
-<!--    <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>-->
-<!--    <script src="./d3.v5.min.js"></script>-->
-<!--    <script src="./wasm_index.min.js"></script>-->
-<!--    <script src="./d3-graphviz.js"></script>-->
 <script src="./node_modules/d3/dist/d3.js"></script>
 <script src="./node_modules/@hpcc-js/wasm/dist/graphviz.umd.js"  type="javascript/worker"></script>
 <script src="./build/d3-graphviz.js"></script>
 </head>
-<body style="background: transparent; margin: 0; background:#404040">
+<body style="margin: 0; background:#404040; height:100%; width: 100%">
 
 
-<div id="graph" style="text-align: center;background:#404040;cursor: default;"></div>
+<div id="graph" style="text-align: center;background:#404040;cursor: default;position: absolute; top: 50%; left: 50%;transform: translate(-50%, -50%);">
+    <div id="placeholder" style="position: absolute; top: 50%; left: 50%;transform: translate(-50%, -50%);" >
+        <img src="img/drag-and-drop.svg" style="height:100px">
+    </div>
+</div>
 <script>
 
     'use strict';
 
+    function deletePlaceholder() {
+        var placeholder = document.getElementById("placeholder")
+        var wrapper = document.getElementById("graph")
+        if (placeholder) {
+            wrapper.removeChild(placeholder)
+        }
+    }
     const fromNative = (msg) => {
-        //log('from native: \"' + msg+"\"")
-        console.log((msg))
+        deletePlaceholder()
+
         var message = JSON.parse(msg)
         var g = graphviz
         if (message.option.reset) {
             g = g.resetZoom()
         }
             g.renderDot("strict digraph {edge [arrowhead=vee,color=\"#A8A8A8\",margin=0];"+message.extra+"node [shape=plaintext,style=filled,fontcolor=\"#E4E5E5\",color=\"#00000000\",margin=0,padding=0];\nrankdir=\"LR\";bgcolor=\"#404040\"\n" + message.graph+"\n}", startApp)
-        //webkit.messageHandlers.bridge.onMessage = this
-      //log(graphviz)
       return ""
     }
 
@@ -130,65 +133,7 @@
       "lpromoter",
     ];
 
-    var dotSrc = `strict digraph {
-        N0 -> N1;
-  N2 -> N1;
-  N1 -> N3;
-  N4 -> N5;
-  N6 -> N5;
-  N7 -> N5;
-  N8 -> N5;
-  N9 -> N5;
-  N10 -> N5;
-  N11 -> N5;
-  N5 -> N2;
-  N12 -> N13;
-  N14 -> N13;
-  N13 -> N15;
-  N16 -> N17;
-  N18 -> N17;
-  N17 -> N19;
-  N20 -> N21;
-  N2 -> N21;
-  N22 -> N21;
-  N23 -> N21;
-  N21 -> N24;
-  N25 -> N26;
-  N27 -> N26;
-  N28 -> N26;
-  N29 -> N26;
-  N30 -> N26;
-  N31 -> N26;
-  N32 -> N26;
-  N33 -> N26;
-  N34 -> N26;
-  N35 -> N26;
-  N36 -> N26;
-  N37 -> N26;
-  N38 -> N26;
-  N39 -> N26;
-  N40 -> N26;
-  N41 -> N26;
-  N26 -> N4;
-  N42 -> N43;
-  N25 -> N43;
-  N43 -> N44;
-  N45 -> N8;
-  N45 -> N46;
-  N47 -> N48;
-  N49 -> N48;
-  N2 -> N48;
-  N50 -> N48;
-  N48 -> N51;
-  N52 -> N53;
-  N54 -> N53;
-  N42 -> N53;
-  N25 -> N53;
-  N53 -> N29;
-  N55 -> N56;
-  N45 [label="aaaa", tooltip="AAAAAAA", url="http://www.google.com"];
-    }`;
-    dotSrc = ``;
+    var dotSrc = ``;
 
     var graphviz = d3.select("#graph").graphviz()
         //.engine('circo')
@@ -209,9 +154,6 @@
         if (datum.tag == "svg") {
             var width = window.innerWidth - margin;
             var height = window.innerHeight - margin;
-            //graphWidth = +selection.datum().attributes.width.replace('pt', '');
-            //graphHeight = +selection.datum().attributes.height.replace('pt', '');
-            //graphviz.zoomTranslateExtent([[rightPad + graphWidth - svgWidth, bottomPad - svgHeight], [svgWidth - leftPad, svgHeight - topPad - graphHeight]])
             var x = "10";
             var y = "10";
             var unit = 'px';
@@ -232,75 +174,6 @@
         var nodes = d3.selectAll(".node");
         var edges = d3.selectAll(".edge");
 
-        // click outside of nodes
-        // d3.select(document).on("click mousedown", function(event) {
-        //     //event.preventDefault();
-        //     //event.stopPropagation();
-        //     console.log('document click or mousedown');
-        //     unSelectEdge();
-        //     if (event.which == 2) {
-        //         var graph0 = d3.select("#graph").selectWithoutDataPropagation("svg").selectWithoutDataPropagation("g");
-        //         var width = 54;
-        //         var height = 36;
-        //         var [x0, y0] = d3.pointer(event, graph0.node());
-        //         var x1 = x0 - width / 2;
-        //         var x2 = x0 + width / 2;
-        //         var y1 = y0 - height / 2;
-        //         var y2 = y0 + height / 2;
-        //         if (nodeIndex == null) {
-        //             nodeIndex = d3.selectAll('.node').size();
-        //         } else {
-        //             nodeIndex += 1;
-        //         }
-        //         var shape = shapes[nodeIndex % shapes.length];
-        //         var numLetters = 'z'.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
-        //         var letter = String.fromCharCode('a'.charCodeAt(0) + (nodeIndex % numLetters));
-        //         var digit = Math.floor(nodeIndex / numLetters) || '';
-        //         var nodeName = letter + digit;
-        //         var fillcolor = d3.schemeCategory10[nodeIndex % 10];
-        //         var color = 'black';
-        //         graphviz
-        //             .drawNode(x1, y1, nodeName, {shape: shape, text: nodeName, fillcolor: fillcolor, color: color})
-        //             .insertDrawnNode(nodeName);
-        //         var dotSrcLines = dotSrc.split('\n');
-        //         var newNodeString = nodeName + ' [shape="' + shape + '" color="' + color + '"; fillcolor="' + fillcolor + '"; penwidth="1"]';
-        //         dotSrcLines.splice(-1, 0, newNodeString);
-        //         dotSrc = dotSrcLines.join('\n');
-        //         render();
-        //     }
-        // });
-
-        // keyup outside of nodes
-        // d3.select(document).on("keyup", function(event) {
-        //     //event.preventDefault();
-        //     console.log('document keyup', event);
-        //     if (event.keyCode == 27) {
-        //         graphviz.removeDrawnEdge();
-        //         unSelectEdge();
-        //     }
-        //     if (event.keyCode == 46) {
-        //         deleteSelectedEdge();
-        //         deleteSelectedNode();
-        //         graphviz.removeDrawnEdge();
-        //         render();
-        //     }
-        //     isDrawingEdge = false;
-        // });
-
-        // move
-        // d3.select(document).on("mousemove", function(event) {
-        //     //event.preventDefault();
-        //     //event.stopPropagation();
-        //     console.log('document mousemove');
-        //     var graph0 = d3.select("#graph").selectWithoutDataPropagation("svg").selectWithoutDataPropagation("g");
-        //     var [x0, y0] = d3.pointer(event, graph0.node());
-        //     var shortening = 2; // avoid mouse pointing on edge
-        //     if (isDrawingEdge) {
-        //         graphviz
-        //             .moveDrawnEdgeEndPoint(x0, y0,  {shortening: shortening})
-        //     }
-        // });
-
         // click and mousedown on nodes
         nodes.on("click", function(event) {
             event.preventDefault();
@@ -319,48 +192,12 @@
                 msg ="expandOut"
             }
 
-            /*if (isDown) {
-                isDown = false
-                return;
-            }
-            isDown = true*/
+
             // Hacky
             var key = d3.select(this).selectChild('title').html()
             webkit.messageHandlers.bridge.postMessage('{"msg": "'+msg+'","id": \"' + key + '\"}')
-            /*if (!isDrawingEdge){// && event.which == 1) {
-                unSelectEdge();
-                selectNode(d3.select(this));
-            } else {
-                console.log(event)
-            }*/
+
         });
-
-        // double-click on nodes
-
-
-        // right-click on nodes
-        // nodes.on("contextmenu", function(event) {
-        //     //event.preventDefault();
-        //     //event.stopPropagation();
-        //     console.log('node contextmenu');
-        //     unSelectEdge();
-        //     unSelectNode();
-        //     graphviz.removeDrawnEdge();
-        //     startNode = d3.select(this);
-        //     var graph0 = d3.select("#graph").selectWithoutDataPropagation("svg").selectWithoutDataPropagation("g");
-        //     var [x0, y0] = d3.pointer(event, graph0.node());
-        //         if (edgeIndex == null) {
-        //             edgeIndex = d3.selectAll('.edge').size();
-        //         } else {
-        //             edgeIndex += 1;
-        //         }
-        //     var fillcolor = d3.schemePaired[(edgeIndex * 2) % 12];
-        //     var color = d3.schemePaired[(edgeIndex * 2 + 1) % 12];
-
-        //     graphviz
-        //         .drawEdge(x0, y0, x0, y0, {fillcolor: fillcolor, color: color});
-        //     isDrawingEdge = true;
-        // });
 
         // click and mousedown on edges
         edges.on("click", function(event) {
@@ -462,31 +299,7 @@
     p.textContent = msg
     document.querySelector('#log').append(p)
   }
-  // to receive messages from native
 
-
-    // terrible hack
-    setTimeout(() => {
-        //console.log('delayed')
-        //webkit.messageHandlers.bridge.onMessage = fromNative
-    }, "2000");
-
-    //webkit.messageHandlers.bridge.onMessage = fromNative
-
-  //document.querySelector('button').addEventListener('click', () => {
-  //    webkit.messageHandlers.bridge.onMessage = fromNative
-
-    //log(typeof webkit.messageHandlers.bridge.postMessage)
-    // send messages to native
-    //webkit.messageHandlers.bridge.postMessage('{"msg": "hello?","id": ' + Date.now() + '}')
-  //})
-
-    /*window.addEventListener("load", (event) => {
-        log('loaded')
-        log(webkit.messageHandlers.bridge)
-        log(webkit.messageHandlers.bridge.onMessage)
-        //webkit.messageHandlers.bridge.onMessage = fromNative
-    });*/
 </script>
 </body>
 </html>

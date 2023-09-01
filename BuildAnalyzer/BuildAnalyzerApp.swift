@@ -18,7 +18,6 @@ struct BuildAnalyzerApp: App {
         WindowGroup {
             var url: URL?
             let graphUrl = Binding(get: { url }, set: { newUrl in
-                // TODO: recognize type (.xcodeproj, manifest.json, .xcbuilddata)
                 guard let inputUrl = newUrl, let newUrlManifest = try? manifestFinder.findLatestManifest(options: .build(xcodeproj: inputUrl)), let newGraph = try? buildGraph(url: newUrlManifest.manifest) else {
                     return
                 }

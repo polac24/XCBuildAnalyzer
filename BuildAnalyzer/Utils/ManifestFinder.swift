@@ -39,6 +39,18 @@ public struct ManifestFinder {
     public init() {}
 
     public func findLatestManifest(options: ManifestFinderOptions) throws -> ManifestLocation? {
+       let file = options.xcodeproj
+        switch file.pathExtension {
+        case "json":
+            return .init(manifest: file, timingDatabase: nil)
+        case "xcodeproj", "xcworkspace":
+            return try? findManifestFromProject(options: options)
+        default:
+            return nil
+        }
+
+    }
+    private func findManifestFromProject(options: ManifestFinderOptions) throws -> ManifestLocation? {
         // get project dir
         let projectDir = try getProjectDir(options)
 
