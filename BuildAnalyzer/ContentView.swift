@@ -40,15 +40,21 @@ struct ContentView: View {
                         search: $search,
                         focus: $focus
                     )
+                    
+                    ZStack(alignment: .topLeading) {
+                        web.onChange(of: focus) { newValue in
+                            web.controller.select(nodeId: newValue)
+                        }.onChange(of: graph) { newValue in
+                            web.controller.reset()
+                            selection = nil
+                        }.onAppear {
+                            web.controller.coordinator.setBinding($selection)
+                        }
 
-                    web.layoutPriority(1000).onChange(of: focus) { newValue in
-                        web.controller.select(nodeId: newValue)
-                    }.onChange(of: graph) { newValue in
-                        web.controller.reset()
-                        selection = nil
-                    }.onAppear {
-                        web.controller.coordinator.setBinding($selection)
-                    }
+                        Button<Text>("◎") {
+                            web.controller.resetZoom()
+                        }.padding(5)
+                    }.layoutPriority(1000)
 
                     GraphItemView (
                         item: graph.nodes[BuildGraphNodeId(id: selection ?? "")], focus: $focus, globalSelection: $selection

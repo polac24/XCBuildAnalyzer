@@ -135,6 +135,21 @@
 
     var dotSrc = ``;
 
+    function addSvgImage(graphviz, names) {
+        var g = graphviz
+        console.log(names.length)
+
+        for (var i=0; i< names.length; i++) {
+            console.log(names[i])
+            g = g
+                .addImage("img/"+names[i]+".svg", "40px", "40px")
+                .addImage("img/"+names[i]+"_in.svg", "40px", "40px")
+                .addImage("img/"+names[i]+"_in_out.svg", "40px", "40px")
+                .addImage("img/"+names[i]+"_out.svg", "40px", "40px")
+        }
+        return g
+    }
+
     var graphviz = d3.select("#graph").graphviz()
         //.engine('circo')
         .attributer(attributer)
@@ -146,6 +161,8 @@
         .transition(function() {
             return d3.transition().duration(300);
         });
+
+    graphviz = addSvgImage(graphviz, ["cube", "cube.transparent", "cube.transparent.fill", "cone", "cone.fill", "pyramid", "pyramid.fill"])
 
     render();
 

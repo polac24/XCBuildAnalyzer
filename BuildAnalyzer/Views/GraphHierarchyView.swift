@@ -39,7 +39,7 @@ struct GraphHierarchyView: View {
 
     var body: some View {
         VStack {
-            List(graph.build().compactMap {$0.filter(search)}, children: \.items, selection: $viewSelection) { row in
+            List(items, children: \.items, selection: $viewSelection) { row in
                 HStack {
                     Text(row.name)
                         .help(row.name)
@@ -84,13 +84,55 @@ extension BuildGraph {
 
         var result = [GraphHierarchyElement]()
         for (kind, elements) in types.sorted(by: {$0.key < $1.key} ) {
-            let elements = elements.map { element in
+            let elements = elements.sorted(by: {$0.1.kind.humanDescription < $1.1.kind.humanDescription}).map { element in
                 let in_cycle = cycleNodes.contains(element.0)
-                return GraphHierarchyElement(id: element.0.id, name: element.1.name, info: in_cycle ? "⚠️" : nil)
+                return GraphHierarchyElement(id: element.0.id, name: element.1.kind.humanDescription, info: in_cycle ? "⚠️" : nil)
             }
             result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind)", info: nil, items: elements))
         }
         storage = result
+        return result
+    }
+}
+
+extension BuildGraphNode.Kind {
+    var humanDescription: String {
+        switch self {
+        case let .action(actionName: _, target: target, hash: _, name: name):
+            // e.g. [MyTarget] will-sign
+            return "[\(target)] \(name)"
+        case let .targetAction(actionName: actionName, target: target, package: package, packageType: packageType, sdkRoot: sdkRoot, sdkVariant: sdkVariant, name: name):
+            return "[\(target)] \(name) (\(packageType))"
+        case let .artificial(id: id, target: target, name: name):
+            return "[\(target)] \(id) \(name)"
+        case let .file(path: path):
+            return path
+        case let .step(stepName: stepName, path: path):
+            let pathURL = URL(fileURLWithPath: path)
+            let pathDescription = path.count > 40 ?  ".../\(pathURL.pathComponents.suffix(5).joined(separator: "/"))" : path
+            return "\(stepName) \(pathDescription)"
+        case let .other(value: value):
+            return value
+        }
+    }
+
+    var subgroup: String? {
+        switch self {
+        case let .action(actionName: _, target: target, hash: _, name: _): return target
+        case let .targetAction(actionName: _, target: target, package: _, packageType: _, sdkRoot: _, sdkVariant: _, name: _): return target
+        default:
+            return nil
+        }
+    }
+}
+
+extension Array {
+    func groupBy<Group: Hashable>(_ block: (Element) -> Group) -> [Group: [Element]] {
+        var result: [Group: [Element]] = [:]
+        for element in self {
+            let group = block(element)
+            let newElements = result[group, default: []] + [element]
+        }
         return result
     }
 }

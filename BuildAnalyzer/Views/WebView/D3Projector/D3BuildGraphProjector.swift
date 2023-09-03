@@ -102,18 +102,18 @@ class D3BuildGraphProjector: BuildGraphProjector {
     private func iconImage(node: BuildGraphNodeProjectionNode) -> String {
         switch (node.hidesSomeInputs, node.hidesSomeOutputs) {
         case (true, true):
-            return "img/edge_more_in_out.png"
+            return "img/cube_in_out.svg"
         case (true, _):
-            return "img/edge_more_in.png"
+            return "img/cube_in.svg"
         case (_, true):
-            return "img/edge_more_out.png"
+            return "img/cube_out.svg"
         default:
-            return "img/edge.png"
+            return "img/cube.svg"
         }
     }
 
     private func buildTableLabel(node: BuildGraphNodeProjectionNode) -> String {
-        "<<table border=\"0\" cellborder=\"0\" cellspacing=\"1\"><TR><TD><IMG SRC=\"\(iconImage(node: node))\"/></TD></TR><tr><td>\(safeHtmlName(buildLabel(nodeName: node.node.id)))</td></tr></table>>"
+        "<<table border=\"0\" cellborder=\"0\" cellspacing=\"1\"><TR><TD><IMG SRC=\"\(iconImage(node: node))\"/></TD></TR><tr><td>\(safeHtmlName(buildLabel(nodeName: BuildGraphNode.Kind.generateKind(name: node.node.id).humanDescription)))</td></tr></table>>"
     }
 
     private func safeHtmlName(_ name: String) -> String {
@@ -122,14 +122,53 @@ class D3BuildGraphProjector: BuildGraphProjector {
         result = result.replacingOccurrences(of:"'", with: "&#39;")
         result = result.replacingOccurrences(of:"<", with: "&lt;")
         result = result.replacingOccurrences(of:">", with: "&gt;")
+        // allow <br/>
+        result = result.replacingOccurrences(of:"\n", with: "<br/>")
         return result
     }
 
     private func buildLabel(nodeName: String) -> String {
+        nodeName.split(maxLen: 30, separator: "\n", maxBatches: 5)
+    }
+}
+
+
+extension String {
+    func split(maxLen: Int, separator: String, maxBatches: Int = 0) -> String {
+        var left = Substring(self)
+        var batches: [Substring] = []
+        var batch: Substring = ""
+        func action() {
+            batch = left.prefix(maxLen)
+            left = left.dropFirst(maxLen)
+        }
+        action()
+        while !batch.isEmpty {
+            batches.append(batch)
+            action()
+        }
+        if maxBatches > 0 {
+            let takeCount = min(batches.count, maxBatches)
+            let prefixCount = takeCount / 2
+            let suffixCount = takeCount - prefixCount
+            var ellipsis: [Self.SubSequence] = []
+            if takeCount < batches.count {
+                ellipsis = ["..."]
+            }
+            batches = batches.prefix(upTo: prefixCount) + ellipsis + batches.suffix(suffixCount)
+        }
+        return batches.joined(separator: separator)
+    }
+}
+
+extension BuildGraphNode.Kind {
+
+    // TODO: remove
+    func _buildLabel(nodeName: String) -> String {
         do {
             if let result = try /_\?\?/.firstMatch(in: nodeName) {
                 // e.g. <target-AFr-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>_i_??
-//                let o = result.output
+                //                let o = result.output
                 return "..."
             } else if let result = try /<(?<g1>[^-]+)-(?<g2>[^-]+)-.*--(?<suf>.*)>/.firstMatch(in: nodeName) {
                 // e.g. <target-AFr-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>
@@ -147,9 +186,9 @@ class D3BuildGraphProjector: BuildGraphProjector {
                 // e.g. Users/bartosz/Documents/wwdc2023/PP/DerivedData/PP/Build/Intermediates.noindex/PP.build/Debug-iphonesimulator/AFr.build/AFr-project-headers.hmap
                 return URL(filePath: nodeName).lastPathComponent
             }
-        return String(nodeName.suffix(20))
-    } catch {
-        return nodeName
+            return String(nodeName.suffix(20))
+        } catch {
+            return nodeName
+        }
     }
-}
 }

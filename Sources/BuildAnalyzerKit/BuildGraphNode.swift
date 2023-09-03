@@ -35,26 +35,61 @@ public struct BuildGraphNode: Hashable, Equatable {
         // Group of the kind - used to group all nodes in the Hierarchy outline (left pane)
         public enum Group: Comparable {
             case action
+            case targetAction
             case step
             case artificial
             case file
-            case unknown
+            case other
         }
         
         case action(actionName: String, target: String, hash: String, name: String)
+        case targetAction(actionName: String, target: String, package: String, packageType: String, sdkRoot: String, sdkVariant: String, name: String)
         case step(stepName: String, path: String)
-        case artificial(id: String, name: String)
+        case artificial(id: String, target: String, name: String)
         case file(path: String)
-        case unknown
-        
+        case other(value: String)
+
         public var group:  Group {
             switch self {
             case .action: return .action
+            case .targetAction: return .targetAction
             case .step: return .step
             case .artificial: return .artificial
             case .file: return .file
-            case .unknown: return .unknown
+            case .other: return .other
             }
+        }
+
+        public static func generateKind(name: String) -> Kind {
+            do {
+                if let result = try /<(?<g1>[^-]+)-(?<g2>[^-]+)-(?<hash>[^-]*)--(?<suf>.*)>/.firstMatch(in: name) {
+                    // e.g. <target-ProjectTarget-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>
+                    let o = result.output
+                    return .action(actionName: String(o.g1), target: String(o.g2), hash: String(o.hash), name: String(o.suf))
+                } else if let result = try /<(?<g1>[^-]+)-(?<g2>[^-]+)-PACKAGE-(?<packageType>[^:]+):(?<package>[^-]+)-SDKROOT:(?<sdkRoot>[^:]*):SDK_VARIANT:(?<sdkVariant>[^-]*)-(?<suf>.*)>/.firstMatch(in: name) {
+                    // e.g. <target-ProjectTarget-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>
+                    let o = result.output
+                    return .targetAction(actionName: String(o.g1), target: String(o.g2), package: String(o.package), packageType: String(o.packageType), sdkRoot: String(o.sdkRoot), sdkVariant: String(o.sdkVariant), name: String(o.suf))
+                } else if let result = try /<(?<g1>[^-]+)-(?<g2>[^-]+)-(?<hash>.*)-(?<unknown>.*)-(?<suf>.*)>/.firstMatch(in: name) {
+                    // e.g. <target-ProjectTarget-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>
+                    let o = result.output
+                    return .action(actionName: String(o.g1), target: String(o.g2), hash: String(o.hash), name: String(o.suf))
+                } else if let result = try /<(?<action>\S+)[\ -](?<input>.*)>/.firstMatch(in: name) {
+                    // e.g. <MkDir /Some/Path/DerivedData/ProjectName/Build/Products/Debug-iphonesimulator/AppName.app>
+                    let o = result.output
+                    return .step(stepName: String(o.action), path: String(o.input))
+                } else if let result = try /P\d+:.*target-(?<target>[^-]+).*-(?<action>\S+) ?(?<input>.*)/.firstMatch(in: name) {
+                    // e.g. P0:::Gate target-ProjectName-f7c7f4eb947860cad1bd0ac8da2fbab7ef7654ceda44fdc53d749a5dfb3f4596--ModuleMapTaskProducer
+                    let o = result.output
+                    return .artificial(id: String(o.action), target: String(o.target), name: String(o.input))
+                }else if name.first == "/" {
+                    // e.g. /Some/Path/DerivedData/ProjectName/Build/Intermediates.noindex/ProjectName.build/Debug-iphonesimulator/TargetName.build/TargetName-project-headers.hmap
+                    return  .file(path: name)
+                }
+            } catch {
+                // TODO: log unknown kind
+            }
+            return .other(value: name)
         }
     }
 
@@ -74,6 +109,7 @@ public struct BuildGraphNode: Hashable, Equatable {
     public let roots: [String]? = nil
     public let expectedOutputs: [String]? = nil
     public let timing: BuildGraphNodeTiming?
+    public let kind: Kind
 
     public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, env: [String: String]?, timing: BuildGraphNodeTiming?) {
         self.id = id
@@ -84,30 +120,7 @@ public struct BuildGraphNode: Hashable, Equatable {
         self.outputs = outputs
         self.env = env
         self.timing = timing
-    }
-
-    public var kind: Kind {
-        do {
-            if let result = try /<(?<g1>[^-]+)-(?<g2>[^-]+)-(?<hash>.*)-(?<unknown>.*)-(?<suf>.*)>/.firstMatch(in: name) {
-                // e.g. <target-ProjectTarget-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>
-                let o = result.output
-                return .action(actionName: String(o.g1), target: String(o.g2), hash: String(o.hash), name: String(o.suf))
-            } else if let result = try /<(?<action>\S+)[\ -](?<input>.*)>/.firstMatch(in: name) {
-                // e.g. <MkDir /Some/Path/DerivedData/ProjectName/Build/Products/Debug-iphonesimulator/AppName.app>
-                let o = result.output
-                return .step(stepName: String(o.action), path: String(o.input))
-            } else if let result = try /P\d+:[^:]*:[^:]*:(?<action>\S+) ?(?<input>.*)/.firstMatch(in: name) {
-                // e.g. P0:::Gate target-ProjectName-f7c7f4eb947860cad1bd0ac8da2fbab7ef7654ceda44fdc53d749a5dfb3f4596--ModuleMapTaskProducer
-                let o = result.output
-                return .artificial(id: String(o.action), name: String(o.input))
-            }else if name.first == "/" {
-                // e.g. /Some/Path/DerivedData/ProjectName/Build/Intermediates.noindex/ProjectName.build/Debug-iphonesimulator/TargetName.build/TargetName-project-headers.hmap
-                return  .file(path: name)
-            }
-        } catch {
-            // TODO: log unknown kind
-        }
-        return .unknown
+        self.kind = Kind.generateKind(name: name)
     }
 }
 

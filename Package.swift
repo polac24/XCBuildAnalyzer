@@ -26,7 +26,8 @@ let package = Package(
             targets: ["XcodeHasher"]),
     ], dependencies: [
         .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.14.1"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.3")
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.3.3"),
+        .package(url: "https://github.com/mikeger/XcodeSelectiveTesting.git", from: "0.8.0")
     ],
     targets: [
         .target(

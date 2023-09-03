@@ -85,6 +85,10 @@ class GraphWebViewController {
         refreshProjection(fresh: true)
     }
 
+    func resetZoom() {
+        refreshProjection(fresh: true)
+    }
+
     func select(nodeId: String?) {
         guard let nodeId = nodeId else {
             // TOOD: consider reset view, but now leave it as is as the user might just unselect by mistake

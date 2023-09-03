@@ -10,7 +10,8 @@ import BuildAnalyzerKit
 
 @main
 struct BuildAnalyzerApp: App {
-    @State private var graph: BuildGraph = .empty //try! buildGraph(url: URL(fileURLWithPath:  "/Users/bartosz/Development/BuildG/DerivedData/BuildG/Build/Intermediates.noindex/XCBuildData/7f298f85ff0a7d4faa437918d6a25d9f.xcbuilddata/manifest.json")) //BuildGraph(nodes: [:])
+//    @State private var graph: BuildGraph = .empty
+    @State private var graph: BuildGraph = try! buildGraph(url: ManifestFinder().findLatestManifest(options: .build(xcodeproj:URL(fileURLWithPath:  "/Users/bartosz/Development/BuildAnalyzer/BuildAnalyzer.xcodeproj")))!.manifest)
     @State private var selection: String?
     @State private var focus: String?
     private let manifestFinder = ManifestFinder()
