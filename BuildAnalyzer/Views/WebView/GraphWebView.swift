@@ -86,7 +86,7 @@ class GraphWebViewController {
     }
 
     func resetZoom() {
-        refreshProjection(fresh: true)
+        sendMessage(true, nil)
     }
 
     func select(nodeId: String?) {
@@ -113,6 +113,7 @@ class GraphWebViewController {
             })
         }
         refreshProjection(fresh: false)
+        resetZoom()
     }
 
     func highlight(nodeId: String?) {
@@ -149,14 +150,7 @@ class GraphWebViewController {
         }
     }
 
-    /// Rebuilds the projector and sends an event to JS
-    /// - Parameter fresh: if true, a completely new view is generated and previous labels don't have to be reused
-    private func refreshProjection(fresh: Bool) {
-        // Experiment - reuse the same "Mapping" to reuse similar nodes and limit number of animations when new node IDs (dot-specific)
-        // are assigned
-        let startingMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = fresh ? [:] : projector.buildGraphNodesMapping
-        projector = D3BuildGraphProjector(projection: currentProjection, buildGrapNodesMapping: startingMapping)
-        let d3String = projector.build()
+    fileprivate func sendMessage(_ fresh: Bool, _ d3String: String?) {
         do {
             let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: "")
             let requestString = try coordinator.generateMessage(request).replacingOccurrences(of: "\"", with: "\\\"")//.replacingOccurrences(of: "\\\\\"", with: "\\\"")
@@ -165,6 +159,17 @@ class GraphWebViewController {
         } catch {
             print("Error in sending from Swift \(error)")
         }
+    }
+    
+    /// Rebuilds the projector and sends an event to JS
+    /// - Parameter fresh: if true, a completely new view is generated and previous labels don't have to be reused
+    private func refreshProjection(fresh: Bool) {
+        // Experiment - reuse the same "Mapping" to reuse similar nodes and limit number of animations when new node IDs (dot-specific)
+        // are assigned
+        let startingMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = projector.buildGraphNodesMapping
+        projector = D3BuildGraphProjector(projection: currentProjection, buildGrapNodesMapping: startingMapping)
+        let d3String = projector.build()
+        sendMessage(fresh, d3String)
     }
 }
 

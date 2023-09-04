@@ -2,7 +2,7 @@
 <!DOCTYPE svg
 PUBLIC "-//W3C//DTD SVG 1.1//EN"
        "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-2 -2 25 25" >
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-4 -4 25 25" >
  <g>
   <rect height="20.4156" opacity="0" width="18.6585" x="0" y="0"/>
   <path d="M0 16.8924C0 18.8345 3.9583 20.4156 9.32471 20.4156C14.6911 20.4156 18.6585 18.8345 18.6585 16.8924C18.6585 16.6435 18.5938 16.4108 18.469 16.1816L10.0247 1.04052C9.87002 0.789058 9.60997 0.618746 9.32471 0.618746C9.03946 0.618746 8.7794 0.789058 8.63379 1.04052L0.180373 16.1816C0.0465828 16.4108 0 16.6435 0 16.8924Z" fill="#ffffff" fill-opacity="0.85"/>

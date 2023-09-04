@@ -14,9 +14,11 @@ struct BuildAnalyzerApp: App {
     @State private var graph: BuildGraph = try! buildGraph(url: ManifestFinder().findLatestManifest(options: .build(xcodeproj:URL(fileURLWithPath:  "/Users/bartosz/Development/BuildAnalyzer/BuildAnalyzer.xcodeproj")))!.manifest)
     @State private var selection: String?
     @State private var focus: String?
+    private static let DefaultTitle = "BuildAnalyzer"
+    @State private var windowTitle = Self.DefaultTitle
     private let manifestFinder = ManifestFinder()
     var body: some Scene {
-        WindowGroup {
+        Window(Self.DefaultTitle, id: "MainWindow") {
             var url: URL?
             let graphUrl = Binding(get: { url }, set: { newUrl in
                 guard let inputUrl = newUrl, let newUrlManifest = try? manifestFinder.findLatestManifest(options: .build(xcodeproj: inputUrl)), let newGraph = try? buildGraph(url: newUrlManifest.manifest) else {
@@ -25,13 +27,14 @@ struct BuildAnalyzerApp: App {
                 
                 DispatchQueue.main.async {
                     url = newUrlManifest.manifest
+                    windowTitle = newUrlManifest.projectFile?.absoluteString ?? Self.DefaultTitle
                     graph = newGraph
                 }
             })
             let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection)
             ContentView(
                 selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, web: webView
-            )
+            )//.navigationTitle(windowTitle)
         }
     }
 }

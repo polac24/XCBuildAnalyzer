@@ -23,8 +23,13 @@ public struct ManifestFinderOptions {
 }
 
 public struct ManifestLocation {
+    let projectFile: URL?
     let manifest: URL
     let timingDatabase: URL?
+
+    func withProjectFile(_ url: URL) -> Self {
+        .init(projectFile: url, manifest: self.manifest, timingDatabase: self.timingDatabase)
+    }
 }
 
 /// Helper methods to locate Xcode's DD directory and project's content
@@ -42,9 +47,9 @@ public struct ManifestFinder {
        let file = options.xcodeproj
         switch file.pathExtension {
         case "json":
-            return .init(manifest: file, timingDatabase: nil)
+            return .init(projectFile: nil, manifest: file, timingDatabase: nil)
         case "xcodeproj", "xcworkspace":
-            return try? findManifestFromProject(options: options)
+            return try? findManifestFromProject(options: options)?.withProjectFile(options.xcodeproj)
         default:
             return nil
         }
@@ -137,7 +142,7 @@ public struct ManifestFinder {
         let manifest = xcBuildData.appending(component: "manifest.json")
         // the "main" .db corresponds to the most recent manifest
         let timingDb = dir.appending(component: "build.db")
-        return ManifestLocation(manifest: manifest, timingDatabase: timingDb)
+        return ManifestLocation(projectFile: nil, manifest: manifest, timingDatabase: timingDb)
     }
 
     public func getProjectFolderNameWithHash(_ project: URL) throws -> String {

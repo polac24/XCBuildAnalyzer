@@ -98,30 +98,26 @@ extension BuildGraph {
 extension BuildGraphNode.Kind {
     var humanDescription: String {
         switch self {
-        case let .action(actionName: _, target: target, hash: _, name: name):
-            // e.g. [MyTarget] will-sign
-            return "[\(target)] \(name)"
-        case let .targetAction(actionName: actionName, target: target, package: package, packageType: packageType, sdkRoot: sdkRoot, sdkVariant: sdkVariant, name: name):
-            return "[\(target)] \(name) (\(packageType))"
-        case let .artificial(id: id, target: target, name: name):
-            return "[\(target)] \(id) \(name)"
+        case let .simpleStep(stepName: stepName, file: file):
+            return "[\(stepName)] \(file)"
         case let .file(path: path):
             return path
-        case let .step(stepName: stepName, path: path):
-            let pathURL = URL(fileURLWithPath: path)
-            let pathDescription = path.count > 40 ?  ".../\(pathURL.pathComponents.suffix(5).joined(separator: "/"))" : path
-            return "\(stepName) \(pathDescription)"
+        case let .triggerStep(stepName: stepName, args: args):
+            return "[\(stepName)] Trigger \(args.joined(separator: " "))"
+        case .end:
+            return "end"
+        case let .complexStep(stepName: stepName, target: target):
+            return "[\(target)] \(stepName)"
+        case let .packageProductStep(stepName: stepName, target: target):
+            return "[\(target)] \(stepName) (ProductStep)"
+        case let .packageTargetStep(stepName: stepName, target: target):
+            return "[\(target)] \(stepName) (TargetStep)"
+        case let .gate(index: _, kind: kind):
+            return "Gate \(kind.humanDescription)"
+        case let .artificial(stepName: stepName, args: args):
+            return "[\(stepName)] \(args.joined(separator: " "))"
         case let .other(value: value):
             return value
-        }
-    }
-
-    var subgroup: String? {
-        switch self {
-        case let .action(actionName: _, target: target, hash: _, name: _): return target
-        case let .targetAction(actionName: _, target: target, package: _, packageType: _, sdkRoot: _, sdkVariant: _, name: _): return target
-        default:
-            return nil
         }
     }
 }

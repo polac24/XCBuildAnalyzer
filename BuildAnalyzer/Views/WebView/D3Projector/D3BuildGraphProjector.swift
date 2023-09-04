@@ -100,16 +100,42 @@ class D3BuildGraphProjector: BuildGraphProjector {
     }
 
     private func iconImage(node: BuildGraphNodeProjectionNode) -> String {
+        var path = "img/"
+        switch BuildGraphNode.Kind.generateKind(name: node.node.id) {
+        case .file:
+            path += "doc"
+        case .simpleStep:
+            path += "cube.transparent"
+        case .complexStep:
+            path += "cube.fill"
+        case .triggerStep:
+            path += "pyramid"
+        case .packageProductStep:
+            path += "cone"
+        case .packageTargetStep:
+            path += "cone.fill"
+        case .artificial:
+            path += "shipping"
+        case .gate:
+            path += "gate"
+        case .other:
+            path += "question"
+        case .end:
+            path += "scope"
+        default:
+            path += "cube"
+        }
         switch (node.hidesSomeInputs, node.hidesSomeOutputs) {
         case (true, true):
-            return "img/cube_in_out.svg"
+            path += "_in_out.svg"
         case (true, _):
-            return "img/cube_in.svg"
+            path += "_in.svg"
         case (_, true):
-            return "img/cube_out.svg"
+            path += "_out.svg"
         default:
-            return "img/cube.svg"
+            path += ".svg"
         }
+        return path
     }
 
     private func buildTableLabel(node: BuildGraphNodeProjectionNode) -> String {
