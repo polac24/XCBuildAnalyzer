@@ -14,12 +14,15 @@ func buildGraph(url: URL) throws -> BuildGraph {
     let parser = BuildManifestParser()
     let manifest = try parser.process(url)
 
+    // TODO: Enable reliable timings which provide valuable timestamps
+/*
     let dbUrl = url.deletingLastPathComponent()
         .deletingLastPathComponent()
         .appendingPathComponent("build.db")
     let timingReader = BuildGraphNodeTimingSqlReader(file: dbUrl)
     let timing = try timingReader.read()
-    return BuildGraph(manifest: manifest, timings: timing)
+ */
+    return BuildGraph(manifest: manifest, timings: [:])
 }
 
 struct ContentView: View {
@@ -40,7 +43,7 @@ struct ContentView: View {
                         search: $search,
                         focus: $focus
                     ).frame(minWidth: 300)
-                    
+
                     ZStack(alignment: .topLeading) {
                         web.onChange(of: focus) { newValue in
                             web.controller.select(nodeId: newValue)
@@ -53,7 +56,10 @@ struct ContentView: View {
 
                         Button<Text>("◎") {
                             web.controller.resetZoom()
-                        }.padding(5)
+                        }
+                        .help("Reset zoom")
+                        .padding(5)
+                        .opacity(graph.nodes.isEmpty ? 0 : 1)
                     }.layoutPriority(1000)
 
                     GraphItemView (

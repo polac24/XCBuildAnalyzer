@@ -88,7 +88,7 @@ extension BuildGraph {
                 let in_cycle = cycleNodes.contains(element.0)
                 return GraphHierarchyElement(id: element.0.id, name: element.1.kind.humanDescription, info: in_cycle ? "⚠️" : nil)
             }
-            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind)", info: nil, items: elements))
+            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind.groupDescription)", info: nil, items: elements))
         }
         storage = result
         return result
@@ -130,5 +130,23 @@ extension Array {
             let newElements = result[group, default: []] + [element]
         }
         return result
+    }
+}
+
+
+extension BuildGraphNode.Kind.Group {
+    var groupDescription: String {
+        switch self {
+        case .file: return "Files"
+        case .other: return "Others"
+        case .simpleStep: return "Simple steps"
+        case .triggerStep: return "Trigger steps"
+        case .end: return "End"
+        case .complexStep: return "Complex steps"
+        case .packageProductStep: return "Package Product steps"
+        case .packageTargetStep: return "Package target steps"
+        case .gate: return "Gates"
+        case .artificial: return "Artificial"
+        }
     }
 }
