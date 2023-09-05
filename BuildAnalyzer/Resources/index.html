@@ -17,6 +17,9 @@
 
     'use strict';
 
+    // Disable right click
+    window.addEventListener('contextmenu', (event) => event.preventDefault());
+
     function deletePlaceholder() {
         var placeholder = document.getElementById("placeholder")
         var wrapper = document.getElementById("graph")
