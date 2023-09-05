@@ -29,12 +29,14 @@ struct BuildAnalyzerApp: App {
                     url = newUrlManifest.manifest
                     windowTitle = newUrlManifest.projectFile?.absoluteString ?? Self.DefaultTitle
                     graph = newGraph
+                    selection = nil
+                    focus = nil
                 }
             })
             let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection)
             ContentView(
                 selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, web: webView
-            )//.navigationTitle(windowTitle)
+            )
         }
     }
 }
