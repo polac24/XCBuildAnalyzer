@@ -39,7 +39,7 @@ struct ContentView: View {
                         graph: graph,
                         search: $search,
                         focus: $focus
-                    )
+                    ).frame(minWidth: 300)
                     
                     ZStack(alignment: .topLeading) {
                         web.onChange(of: focus) { newValue in
@@ -58,7 +58,7 @@ struct ContentView: View {
 
                     GraphItemView (
                         item: graph.nodes[BuildGraphNodeId(id: selection ?? "")], focus: $focus, globalSelection: $selection
-                    ).frame(minWidth: 200)
+                    ).frame(minWidth: 300)
                 }
             }
         }

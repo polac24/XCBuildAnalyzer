@@ -34,7 +34,6 @@ class MyWK: WKWebView {
             return false
         }
         let objects = object as! [URL]
-        print(objects)
         // Take only the first one
         graphUrl = objects[0]
         return true
@@ -49,7 +48,6 @@ class GraphWebViewController {
     let coordinator: GraphWebViewCoordinator
     var webView: WKWebView
     @Binding private var graph: BuildGraph
-//    private let messageFactory = D3GraphMessageFactory()
     private(set) var created: Bool = false
     private var currentProjection: BuildGraphProjection
     private var projector: D3BuildGraphProjector
@@ -66,7 +64,9 @@ class GraphWebViewController {
         configuration.userContentController = userContentController
 
         let _wkwebview = MyWK(graphUrl: graphUrl, configuration: configuration)
+#if DEBUG
         _wkwebview.isInspectable = true
+#endif
         self.webView = _wkwebview
         self.coordinator = coordinator
 
@@ -174,23 +174,11 @@ class GraphWebViewController {
 }
 
 class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
-//    @Binding var action: GraphViewRequestAction?
-//    private var graph: BuildGraph
     private var selection: Binding<String?>?
     var onChange: ((GraphViewRequestAction) -> ())?
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
-//    init(graph: BuildGraph) {
-//        self._action = action
-//        self.graph = graph
-//        self.onChange = onChange
-//        self._selection = Binding(get: {
-//            selection.wrappedValue
-//        }, set: { nodeId in
-//            print(nodeId)
-//        })
-//    }
 
     func setBinding(_ selection: Binding<String?>) {
         self.selection = Binding(get: {
@@ -221,21 +209,6 @@ class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHa
             action = .extendOut(id: id)
         }
         onChange?(action)
-//        selection. = response.id
-//        selection?.wrappedValue = "222"
-        // find the graphNodeId from the D3's context
-//        guard let nodeId = projector.d3GraphNodesMapping[response.id] else {
-//            print("Missing nodeId")
-//            return
-//        }
-//        currentProjection = graph.expand(projection: currentProjection, with: .inputs(of: nodeId))
-//        projector = D3BuildGraphProjector(projection: currentProjection)
-//        print(projector.build())
-//        print(action)
-
-//        let filteredManifest = processor?.analyzer?.filterManifest(node: response.id)
-//        let formattedManifest = processor!.formatter.generate(filteredManifest!, focus: response.id)
-//        self.webView?.evaluateJavaScript("webkit.messageHandlers.bridge.onMessage('\(formattedManifest.0)')")
     }
 
     func generateMessage(_ message: D3PageRequest) throws -> String {
@@ -251,27 +224,11 @@ class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHa
 
 struct GraphWebView: NSViewRepresentable {
     let controller: GraphWebViewController
-//    @Binding var projection: BuildGraphProjection
-//    @Binding var action: GraphViewRequestAction?
-//    @Binding var selection: String?
 
     init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<String?>) {
         let controller = GraphWebViewController(graph: graph, graphUrl: graphUrl, selection: selection)
 
         self.controller = controller
-//        self._selection = selection
-//        self._selection = Binding(get: {
-//            selection.wrappedValue
-//        }, set: { nodeId in
-//            controller.select(nodeId: nodeId)
-//        })
-//        self._projection = Binding(get: {
-//            projection.wrappedValue
-//        }, set: { [controller] newValue in
-//            controller.refresh(projection: newValue)
-//            projection.wrappedValue = newValue
-//        })
-//        self._action = action
     }
 
     func makeNSView(context: Context) -> WKWebView {
@@ -282,25 +239,14 @@ struct GraphWebView: NSViewRepresentable {
     func updateNSView(_ webView: WKWebView, context: Context) {
         guard let path: String = Bundle.main.path(forResource: "index", ofType: "html") else { return }
         let localHTMLUrl = URL(fileURLWithPath: path, isDirectory: false)
-//        let html = try! String(contentsOf: localHTMLUrl)
         let resources = localHTMLUrl.deletingLastPathComponent()
         webView.loadFileURL(localHTMLUrl, allowingReadAccessTo: resources)
     }
-
-//    func makeNSView(context: Context) -> NSView {
-//        let v = NSView(frame: .init(x: 0, y: 0, width: 100, height: 100))
-//        v.layer?.backgroundColor = .init(red: 1, green: 0, blue: 0, alpha: 0)
-//        return v
-//    }
-//    func updateNSView(_ nsView: NSView, context: Context) {
-//
-//    }
 }
 
 
 class D3GraphMessageFactory {
     func generate(projection: BuildGraphProjection) -> String {
-        print(projection.nodes)
         return ""
     }
 }
