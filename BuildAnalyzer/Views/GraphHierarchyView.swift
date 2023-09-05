@@ -49,6 +49,7 @@ struct GraphHierarchyView: View {
                             focus = v
                             selection = v
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     if let info = row.info { Text(info).help("Exists in a cycle") }
                 }
             }
@@ -88,7 +89,8 @@ extension BuildGraph {
                 let in_cycle = cycleNodes.contains(element.0)
                 return GraphHierarchyElement(id: element.0.id, name: element.1.kind.humanDescription, info: in_cycle ? "⚠️" : nil)
             }
-            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind.groupDescription)", info: nil, items: elements))
+            let anyInfo = elements.lazy.compactMap {$0.info}.first
+            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind.groupDescription)", info: anyInfo, items: elements))
         }
         storage = result
         return result
