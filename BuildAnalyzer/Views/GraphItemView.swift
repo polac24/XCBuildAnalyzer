@@ -25,6 +25,7 @@ struct GraphItemRelationItem: View {
                 selection = element
             }
             .background(selection == element ? Color.gray : Color.clear)
+            .textSelection(.enabled)
     }
 }
 
@@ -45,6 +46,7 @@ struct GraphItemDetailsSetView: View {
                         .help(element.id)
                         .lineLimit(1)
                         .truncationMode(.middle)
+                        .textSelection(.enabled)
                 }.width(min: 1000)
             }
             .frame(minHeight: 200)
@@ -56,6 +58,28 @@ struct GraphItemDetailsSetView: View {
     }
 }
 
+
+struct GraphItemDetailsArrayView: View {
+    let title: String
+    let items: [String]?
+
+    var body: some View {
+        if (items?.count ?? 0) > 0 {
+            Divider()
+            Table(items ?? []){
+                TableColumn(title){ element in
+                    Text(element)
+                        .padding(.horizontal, 5)
+                        .help(element)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .textSelection(.enabled)
+                }.width(min: 1000)
+            }
+            .frame(minHeight: 200)
+        }
+    }
+}
 
 struct GraphItemDetailEnvView: View {
     let title: String
@@ -103,7 +127,7 @@ struct GraphItemDetailView: View {
         if let v = value, !v.isEmpty {
             Divider()
             Text(title).bold()
-            Text(v)
+            Text(v).lineLimit(1).textSelection(.enabled)
         }
     }
 }
@@ -141,11 +165,16 @@ struct GraphItemView: View {
         VStack {
             ScrollView{
                 Text("Details")
-                Text(item?.id.id ?? "")
+                Text(item?.id.id ?? "").textSelection(.enabled)
                 GraphItemDetailView(title: "Tool", value: item?.tool)
+                GraphItemDetailView(title: "Description", value: item?.description)
                 GraphItemDetailEnvView(title: "ENVs", values: item?.env)
+                GraphItemDetailsArrayView(title: "Args", items: item?.args)
+                GraphItemDetailView(title: "Working Directory", value: item?.workingDirectory)
                 GraphItemDetailsSetView(title: "Inputs", items: item?.inputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
                 GraphItemDetailsSetView(title: "Outputs", items: item?.outputs, selection: $selection, focus: $focus, globalSelection: $globalSelection)
+                GraphItemDetailView(title: "Signature", value: item?.signature)
+                GraphItemDetailsArrayView(title: "Roots", items: item?.roots)
             }
             Spacer()
             GraphItemTimingView(title: "Timing", timing: item?.timing)
@@ -155,7 +184,8 @@ struct GraphItemView: View {
 
 struct GraphItemView_Previews: PreviewProvider {
     static var previews: some View {
-        GraphItemView(item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [.init(id: "1111eee1sdajiodjasi doaijd oasidj aoidj osaidj asoidj asoidj aosidja sdioaj oasidj oaijd oiasjd oaisjd oaisjd oaisjd oaisjd oiasjd iasjod ij oi")], outputs: [], env: ["a":"B", "c": "Sssss"], timing: BuildGraphNodeTiming(node: .init(id:"id"), start: 20.3221, end: 100.2, percentage: 0.5)), focus: .constant(nil), globalSelection: .constant(nil))
+        GraphItemView(
+            item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [.init(id: "1111eee1sdajiodjasi doaijd oasidj aoidj osaidj asoidj asoidj aosidja sdioaj oasidj oaijd oiasjd oaisjd oaisjd oaisjd oaisjd oiasjd iasjod ij oi")], outputs: [], expectedOutputs: ["a.h"], roots: ["/root"], env: ["a":"B", "c": "Sssss"], description: "desc", args: ["-a","-b"], signature: "signature", workingDirectory: "/work", timing: BuildGraphNodeTiming(node: .init(id:"id"), start: 20.3221, end: 100.2, percentage: 0.5)), focus: .constant(nil), globalSelection: .constant(nil))
     }
 }
 

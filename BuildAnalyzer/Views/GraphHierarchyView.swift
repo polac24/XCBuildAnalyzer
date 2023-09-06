@@ -116,7 +116,7 @@ extension BuildGraphNode.Kind {
             return "[\(target)] \(stepName) (TargetStep)"
         case let .gate(index: _, kind: kind):
             return "Gate \(kind.humanDescription)"
-        case let .artificial(stepName: stepName, args: args):
+        case let .command(stepName: stepName, args: args):
             return "[\(stepName)] \(args.joined(separator: " "))"
         case let .other(value: value):
             return value
@@ -148,7 +148,7 @@ extension BuildGraphNode.Kind.Group {
         case .packageProductStep: return "Package Product steps"
         case .packageTargetStep: return "Package target steps"
         case .gate: return "Gates"
-        case .artificial: return "Artificial"
+        case .command: return "Commands"
         }
     }
 }

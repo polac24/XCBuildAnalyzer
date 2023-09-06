@@ -11,12 +11,32 @@ public typealias BuildManifestTool = String
 public typealias BuildManifestId = String
 
 public struct BuildManifestCommand: Codable, Hashable {
+
+    enum CodingKeys: String, CodingKey {
+        case tool
+        case inputs
+        case outputs
+        case expectedOutputs
+        case roots
+        case env
+        case description
+        case args
+        case signature
+        case workingDirectory = "working-directory"
+        case alwaysOutOfDate = "always-out-of-date"
+    }
+
     var tool: BuildManifestTool
     var inputs: [String]?
     var outputs: [String]?
     var expectedOutputs: [String]?
     var roots: [String]?
     var env: [String: String]?
+    var description: String?
+    var args: [String]?
+    var signature: String?
+    var workingDirectory: String?
+    var alwaysOutOfDate: Bool?
 }
 
 public struct BuildManifestClient: Codable {

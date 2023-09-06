@@ -36,6 +36,7 @@ public class BuildGraph: BuildGraphProtocol, Equatable{
     }()
 }
 
+
 public extension BuildGraph {
     convenience init(manifest: BuildManifest, timings: [BuildGraphNodeTimingId: BuildGraphNodeTiming] = [:]) {
         let nodes = Self.buildAllNodes(commands: manifest.commands, timings: timings)
@@ -77,7 +78,12 @@ public extension BuildGraph {
                 properties: properties(from: command),
                 inputs: Set(inputIds),
                 outputs: Set(outputIds),
-                env: command.env,
+                expectedOutputs: command.expectedOutputs,
+                roots: command.roots, env: command.env,
+                description: command.description,
+                args: command.args,
+                signature: command.signature,
+                workingDirectory: command.workingDirectory,
                 timing: timings[commandNodeId]
             )
             visitedNodes[commandNodeId] = node

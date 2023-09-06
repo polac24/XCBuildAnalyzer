@@ -42,13 +42,16 @@ public struct BuildGraphNode: Hashable, Equatable {
     public var inputs: Set<BuildGraphNodeId>
     public var outputs: Set<BuildGraphNodeId>
     public let env: [String: String]?
-    public let description: String? = nil
-    public let roots: [String]? = nil
-    public let expectedOutputs: [String]? = nil
+    public let description: String?
+    public let roots: [String]?
+    public let expectedOutputs: [String]?
+    public let args: [String]?
+    public let signature: String?
+    public let workingDirectory: String?
     public let timing: BuildGraphNodeTiming?
     public let kind: BuildGraphNode.Kind
 
-    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, env: [String: String]?, timing: BuildGraphNodeTiming?) {
+    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, expectedOutputs: [String]?, roots: [String]?, env: [String: String]?, description: String?, args: [String]?, signature: String?, workingDirectory: String?, timing: BuildGraphNodeTiming?) {
         self.id = id
         self.tool = tool
         self.name = name
@@ -58,6 +61,12 @@ public struct BuildGraphNode: Hashable, Equatable {
         self.env = env
         self.timing = timing
         self.kind = Kind.generateKind(name: name)
+        self.args = args
+        self.signature = signature
+        self.workingDirectory = workingDirectory
+        self.description = description
+        self.roots = roots
+        self.expectedOutputs = expectedOutputs
     }
 }
 
@@ -72,7 +81,13 @@ extension BuildGraphNode {
             properties: [:],
             inputs: [],
             outputs: [],
+            expectedOutputs: nil,
+            roots: nil, 
             env: [:],
+            description: nil,
+            args: nil,
+            signature: nil,
+            workingDirectory: nil,
             timing: nil
         )
     }

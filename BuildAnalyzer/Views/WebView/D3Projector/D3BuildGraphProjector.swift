@@ -114,7 +114,7 @@ class D3BuildGraphProjector: BuildGraphProjector {
             path += "cone"
         case .packageTargetStep:
             path += "cone.fill"
-        case .artificial:
+        case .command:
             path += "shipping"
         case .gate:
             path += "gate"

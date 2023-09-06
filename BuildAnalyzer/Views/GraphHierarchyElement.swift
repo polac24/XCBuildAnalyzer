@@ -15,6 +15,7 @@ struct GraphHierarchyElement: Identifiable, Equatable {
 }
 
 
+
 extension GraphHierarchyElement {
     func filter(_ string: String) -> GraphHierarchyElement? {
         guard string != "" else { return self }

@@ -10,7 +10,7 @@ public extension BuildGraphNode {
             case triggerStep
             case packageProductStep
             case packageTargetStep
-            case artificial
+            case command
             case gate
             case other
             case end
@@ -24,7 +24,7 @@ public extension BuildGraphNode {
         case packageProductStep(stepName: String, target: String)
         case packageTargetStep(stepName: String, target: String)
         case gate(index: Int, kind: BuildGraphNode.Kind)
-        case artificial(stepName: String, args: [String])
+        case command(stepName: String, args: [String])
         case other(value: String)
 
         public var group:  Group {
@@ -38,7 +38,7 @@ public extension BuildGraphNode {
             case .packageProductStep: return .packageProductStep
             case .packageTargetStep: return .packageTargetStep
             case .gate: return .gate
-            case .artificial: return .artificial
+            case .command: return .command
             }
         }
 
@@ -62,7 +62,7 @@ public extension BuildGraphNode {
 
                     let o = result.output
                     // wrap the "gate" into <> to match the expected format in generateKind
-                    return .artificial(stepName: String(o.stepName), args:o.args?.components(separatedBy: " ") ?? [])
+                    return .command(stepName: String(o.stepName), args:o.args?.components(separatedBy: " ") ?? [])
                 } else if let result = try /<TRIGGER: (?<stepName>[^-]+)[ \-](?<args>\/.+)>/.firstMatch(in: name) {
                     // e.g. <CodeSign /SomePath/Build/Products/Debug/BuildAnalyzer.app>
                     // e.g. <CreateBuildDirectory-/SomePath/DerivedData/BuildAnalyzer/Build/Products>>
