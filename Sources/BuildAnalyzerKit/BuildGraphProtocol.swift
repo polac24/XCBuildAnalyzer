@@ -8,7 +8,7 @@
 import Foundation
 
 
-public protocol BuildGraphProtocol {
+public protocol BuildGraphProtocol: AnyObject {
     var nodes: [BuildGraphNodeId: BuildGraphNode] { get }
     var cycles: [[BuildGraphNodeId]] {get}
 
@@ -16,7 +16,7 @@ public protocol BuildGraphProtocol {
 }
 
 public extension BuildGraphProtocol {
-    public var cycleNodes: [BuildGraphNodeId] {
+    var cycleNodes: [BuildGraphNodeId] {
         return cycles.flatMap({$0})
     }
 }

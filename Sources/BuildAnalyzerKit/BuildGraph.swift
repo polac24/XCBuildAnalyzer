@@ -22,9 +22,6 @@ public class BuildGraph: BuildGraphProtocol, Equatable{
     // Might not be needed
     public private(set) var buildInterval: BuildInterval?
 
-    // Hacky
-    public var storage: [Any]? = nil
-
     public init(nodes: [BuildGraphNodeId: BuildGraphNode], cycles: [[BuildGraphNodeId]], buildInterval: BuildInterval?) {
         self.nodes = nodes
         self.cycles = cycles

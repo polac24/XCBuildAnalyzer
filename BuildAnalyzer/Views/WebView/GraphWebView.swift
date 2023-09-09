@@ -17,6 +17,7 @@ enum GraphViewRequestAction {
     case set(id: BuildGraphNodeId)
 }
 
+// The custom WKWebView to capture .xcodeproj Drag&Drop to the WebView
 class MyWK: WKWebView {
     @Binding var graphUrl: URL?
 
@@ -106,7 +107,6 @@ class GraphWebViewController {
         currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
         if graph.cycleNodes.contains(bgNodeId) {
             let cycle = graph.cycles.first!
-            // TODO
             currentProjection = graph.expand(projection: currentProjection, with: .cycle(of: bgNodeId, cycle: graph.cycles.first! ))
             currentProjection.highlightedEdges = Set(zip(cycle, cycle.dropFirst()).map { source, dest in
                 BuildGraphEdge(source: source, destination: dest)
@@ -153,7 +153,7 @@ class GraphWebViewController {
     fileprivate func sendMessage(_ fresh: Bool, _ d3String: String?) {
         do {
             let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: "")
-            let requestString = try coordinator.generateMessage(request).replacingOccurrences(of: "\"", with: "\\\"")//.replacingOccurrences(of: "\\\\\"", with: "\\\"")
+            let requestString = try coordinator.generateMessage(request).replacingOccurrences(of: "\"", with: "\\\"")
             webView.evaluateJavaScript("webkit.messageHandlers.bridge.onMessage = fromNative")
             webView.evaluateJavaScript("webkit.messageHandlers.bridge.onMessage('\(requestString)')")
         } catch {
@@ -167,7 +167,7 @@ class GraphWebViewController {
         // Experiment - reuse the same "Mapping" to reuse similar nodes and limit number of animations when new node IDs (dot-specific)
         // are assigned
         let startingMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = projector.buildGraphNodesMapping
-        projector = D3BuildGraphProjector(projection: currentProjection, buildGrapNodesMapping: startingMapping)
+        projector = D3BuildGraphProjector(projection: currentProjection, buildGraphNodesMapping: startingMapping)
         let d3String = projector.build()
         sendMessage(fresh, d3String)
     }
@@ -213,9 +213,6 @@ class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHa
 
     func generateMessage(_ message: D3PageRequest) throws -> String {
         var safeMessage = message
-        // the escape will be decoded when sending to JS. Extra
-//        let safeD3 = message.graph.replacingOccurrences(of: "\"", with: "\"")
-//        safeMessage.graph = safeD3
         return try String(data: encoder.encode(safeMessage), encoding: .utf8)!
     }
 

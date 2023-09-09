@@ -11,7 +11,6 @@ import BuildAnalyzerKit
 @main
 struct BuildAnalyzerApp: App {
     @State private var graph: BuildGraph = .empty
-//    @State private var graph: BuildGraph = try! buildGraph(url: ManifestFinder().findLatestManifest(options: .build(xcodeproj:URL(fileURLWithPath:  "/Users/bartosz/Development/BuildAnalyzer/BuildAnalyzer.xcodeproj")))!.manifest)
     @State private var selection: String?
     @State private var focus: String?
     private static let DefaultTitle = "BuildAnalyzer"
@@ -34,7 +33,7 @@ struct BuildAnalyzerApp: App {
                 }
             })
             let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection)
-            ContentView(
+            AppView(
                 selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, web: webView
             )
         }

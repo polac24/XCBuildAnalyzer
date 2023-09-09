@@ -21,17 +21,13 @@ class D3BuildGraphProjector: BuildGraphProjector {
     private(set) var d3GraphNodesMapping: [D3BuildGraphNodeId: BuildGraphNodeId]
 
 
-//    typealias DotNode = String
-//    typealias DotReference = String
-//    private var output = ["digraph G {"]
     private var edges: [(BuildGraphNodeProjectionNode, BuildGraphNodeProjectionNode)] = []
-//    private var nodes: [DotNode: DotReference] = [:]
     private let projection: BuildGraphProjection
 
-    init(projection: BuildGraphProjection, buildGrapNodesMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = [:]) {
+    init(projection: BuildGraphProjection, buildGraphNodesMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = [:]) {
         self.projection = projection
-        self.buildGraphNodesMapping = buildGrapNodesMapping
-        d3GraphNodesMapping = buildGrapNodesMapping.reduce(into: [:], { partialResult, next in
+        self.buildGraphNodesMapping = buildGraphNodesMapping
+        d3GraphNodesMapping = buildGraphNodesMapping.reduce(into: [:], { partialResult, next in
             partialResult[next.value] = next.key
         })
 
@@ -184,37 +180,5 @@ extension String {
             batches = batches.prefix(upTo: prefixCount) + ellipsis + batches.suffix(suffixCount)
         }
         return batches.joined(separator: separator)
-    }
-}
-
-extension BuildGraphNode.Kind {
-
-    // TODO: remove
-    func _buildLabel(nodeName: String) -> String {
-        do {
-            if let result = try /_\?\?/.firstMatch(in: nodeName) {
-                // e.g. <target-AFr-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>_i_??
-                //                let o = result.output
-                return "..."
-            } else if let result = try /<(?<g1>[^-]+)-(?<g2>[^-]+)-.*--(?<suf>.*)>/.firstMatch(in: nodeName) {
-                // e.g. <target-AFr-f7c7f4eb947860cad1bd0ac8da2fbab7b297c560689668aabd8feed2d35e08a1--HeadermapTaskProducer>
-                let o = result.output
-                return "\(o.g1)-\(o.g2)-\(o.suf.suffix(20))"
-            } else if let result = try /<(?<action>\S+)[\ -](?<input>.*)>/.firstMatch(in: nodeName) {
-                // e.g. <MkDir /Users/bartosz/Documents/wwdc2023/PP/DerivedData/PP/Build/Products/Debug-iphonesimulator/PP.app>
-                let o = result.output
-                return "\(o.action)-\(o.input.suffix(20))"
-            } else if let result = try /P\d+:[^:]*:[^:]*:(?<action>\S+) ?(?<input>.*)/.firstMatch(in: nodeName) {
-                // e.g. P0:::Gate target-PP-f7c7f4eb947860cad1bd0ac8da2fbab7ef7654ceda44fdc53d749a5dfb3f4596--ModuleMapTaskProducer
-                let o = result.output
-                return "\(o.action)-\(o.input.suffix(20))"
-            } else if nodeName.first == "/" {
-                // e.g. Users/bartosz/Documents/wwdc2023/PP/DerivedData/PP/Build/Intermediates.noindex/PP.build/Debug-iphonesimulator/AFr.build/AFr-project-headers.hmap
-                return URL(filePath: nodeName).lastPathComponent
-            }
-            return String(nodeName.suffix(20))
-        } catch {
-            return nodeName
-        }
     }
 }

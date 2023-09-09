@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		4E322FF72A3F79F000118F54 /* BuildAnalyzerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */; };
-		4E322FF92A3F79F000118F54 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E322FF82A3F79F000118F54 /* ContentView.swift */; };
 		4E322FFB2A3F79F100118F54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E322FFA2A3F79F100118F54 /* Assets.xcassets */; };
 		4E322FFE2A3F79F100118F54 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E322FFD2A3F79F100118F54 /* Preview Assets.xcassets */; };
 		4E3230092A3F79F100118F54 /* BuildAnalyzerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3230082A3F79F100118F54 /* BuildAnalyzerTests.swift */; };
@@ -19,8 +18,6 @@
 		4E3230282A3F7C7200118F54 /* GraphKit in Frameworks */ = {isa = PBXBuildFile; productRef = 4E3230272A3F7C7200118F54 /* GraphKit */; };
 		4E32302B2A40D39C00118F54 /* GraphHierarchyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */; };
 		4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302C2A40D3BD00118F54 /* GraphWebView.swift */; };
-		4E32302F2A40D3EC00118F54 /* BuildsHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E32302E2A40D3EC00118F54 /* BuildsHistoryView.swift */; };
-		4E3230322A40D5CE00118F54 /* GraphViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3230312A40D5CE00118F54 /* GraphViewModel.swift */; };
 		4E3230342A40D76A00118F54 /* GraphHierarchyElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */; };
 		4E32303A2A411AD700118F54 /* build in Resources */ = {isa = PBXBuildFile; fileRef = 4E3230362A411AD300118F54 /* build */; };
 		4E32303B2A411AD700118F54 /* node_modules in Resources */ = {isa = PBXBuildFile; fileRef = 4E3230372A411AD600118F54 /* node_modules */; };
@@ -30,6 +27,8 @@
 		4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */; };
 		4E5C0C652A82898500170E3E /* GraphItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5C0C642A82898500170E3E /* GraphItemView.swift */; };
 		4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */; };
+		4EBCFD372AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBCFD362AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift */; };
+		4EBCFD3B2AAA9E2500CD3AC9 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBCFD3A2AAA9E2500CD3AC9 /* AppView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +51,6 @@
 /* Begin PBXFileReference section */
 		4E322FF32A3F79F000118F54 /* BuildAnalyzer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BuildAnalyzer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildAnalyzerApp.swift; sourceTree = "<group>"; };
-		4E322FF82A3F79F000118F54 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4E322FFA2A3F79F100118F54 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E322FFD2A3F79F100118F54 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4E322FFF2A3F79F100118F54 /* BuildAnalyzer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BuildAnalyzer.entitlements; sourceTree = "<group>"; };
@@ -63,8 +61,6 @@
 		4E3230142A3F79F100118F54 /* BuildAnalyzerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildAnalyzerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphHierarchyView.swift; sourceTree = "<group>"; };
 		4E32302C2A40D3BD00118F54 /* GraphWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphWebView.swift; sourceTree = "<group>"; };
-		4E32302E2A40D3EC00118F54 /* BuildsHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuildsHistoryView.swift; sourceTree = "<group>"; };
-		4E3230312A40D5CE00118F54 /* GraphViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphViewModel.swift; sourceTree = "<group>"; };
 		4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphHierarchyElement.swift; sourceTree = "<group>"; };
 		4E3230362A411AD300118F54 /* build */ = {isa = PBXFileReference; lastKnownFileType = folder; path = build; sourceTree = "<group>"; };
 		4E3230372A411AD600118F54 /* node_modules */ = {isa = PBXFileReference; lastKnownFileType = folder; path = node_modules; sourceTree = "<group>"; };
@@ -74,6 +70,8 @@
 		4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3PageResponse.swift; sourceTree = "<group>"; };
 		4E5C0C642A82898500170E3E /* GraphItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphItemView.swift; sourceTree = "<group>"; };
 		4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestFinder.swift; sourceTree = "<group>"; };
+		4EBCFD362AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphHierarchyContentBuilder.swift; sourceTree = "<group>"; };
+		4EBCFD3A2AAA9E2500CD3AC9 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,10 +135,9 @@
 			children = (
 				4E20C0F72A98DA4500C08953 /* Utils */,
 				4E3230352A411AB000118F54 /* Resources */,
-				4E3230302A40D5BE00118F54 /* Models */,
 				4E3230292A40D39500118F54 /* Views */,
 				4E322FF62A3F79F000118F54 /* BuildAnalyzerApp.swift */,
-				4E322FF82A3F79F000118F54 /* ContentView.swift */,
+				4EBCFD3A2AAA9E2500CD3AC9 /* AppView.swift */,
 				4E322FFA2A3F79F100118F54 /* Assets.xcassets */,
 				4E322FFF2A3F79F100118F54 /* BuildAnalyzer.entitlements */,
 				4E322FFC2A3F79F100118F54 /* Preview Content */,
@@ -176,21 +173,11 @@
 		4E3230292A40D39500118F54 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4EBCFD382AAA9AFD00CD3AC9 /* DetailsView */,
+				4EBCFD352AAA96A900CD3AC9 /* HierarchyView */,
 				4E32303E2A411F0D00118F54 /* WebView */,
-				4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */,
-				4E32302E2A40D3EC00118F54 /* BuildsHistoryView.swift */,
-				4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */,
-				4E5C0C642A82898500170E3E /* GraphItemView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		4E3230302A40D5BE00118F54 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				4E3230312A40D5CE00118F54 /* GraphViewModel.swift */,
-			);
-			path = Models;
 			sourceTree = "<group>";
 		};
 		4E3230352A411AB000118F54 /* Resources */ = {
@@ -220,6 +207,24 @@
 				4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */,
 			);
 			path = D3Projector;
+			sourceTree = "<group>";
+		};
+		4EBCFD352AAA96A900CD3AC9 /* HierarchyView */ = {
+			isa = PBXGroup;
+			children = (
+				4E3230332A40D76A00118F54 /* GraphHierarchyElement.swift */,
+				4E32302A2A40D39C00118F54 /* GraphHierarchyView.swift */,
+				4EBCFD362AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift */,
+			);
+			path = HierarchyView;
+			sourceTree = "<group>";
+		};
+		4EBCFD382AAA9AFD00CD3AC9 /* DetailsView */ = {
+			isa = PBXGroup;
+			children = (
+				4E5C0C642A82898500170E3E /* GraphItemView.swift */,
+			);
+			path = DetailsView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -368,14 +373,13 @@
 				4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */,
 				4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */,
 				4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */,
-				4E322FF92A3F79F000118F54 /* ContentView.swift in Sources */,
+				4EBCFD3B2AAA9E2500CD3AC9 /* AppView.swift in Sources */,
 				4E3230342A40D76A00118F54 /* GraphHierarchyElement.swift in Sources */,
 				4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */,
-				4E32302F2A40D3EC00118F54 /* BuildsHistoryView.swift in Sources */,
+				4EBCFD372AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift in Sources */,
 				4E32302B2A40D39C00118F54 /* GraphHierarchyView.swift in Sources */,
 				4E322FF72A3F79F000118F54 /* BuildAnalyzerApp.swift in Sources */,
 				4E5C0C652A82898500170E3E /* GraphItemView.swift in Sources */,
-				4E3230322A40D5CE00118F54 /* GraphViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
