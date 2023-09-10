@@ -25,11 +25,12 @@ public class BuildGraphNodeTimingSqlReader: BuildGraphNodeTimingReader {
         var result: [BuildGraphNodeTimingId: BuildGraphNodeTiming] = [:]
         let db = try Connection(file.absoluteString, readonly: true)
 
-        let buildStart = try readDate(try db.scalar("SELECT min(start) FROM rule_results"))
-        let buildEnd = try readDate(try db.scalar("SELECT max(end) FROM rule_results"))
+        let iteration: Int64 = try read(try db.scalar("SELECT max(iteration) FROM info"))
+        let buildStart = try readDate(try db.scalar("SELECT min(start) FROM rule_results where built_at = \(iteration)"))
+        let buildEnd = try readDate(try db.scalar("SELECT max(end) FROM rule_results where built_at = \(iteration)"))
         let buildDuration = buildEnd - buildStart
 
-        for row in try db.prepare("SELECT start, end, key_names.key, key_id from rule_results inner join key_names on rule_results.key_id = key_names.id ") {
+        for row in try db.prepare("SELECT start, end, key_names.key, key_id from rule_results inner join key_names on rule_results.key_id = key_names.id where built_at = \(iteration)") {
             // first char in row[2] is a type (C,K etc). Example: "C<target-ManifestParser-bc75e606ed3b47368a6dc071f5ab1c32e9d992eb94ae6b73e7b9d19fb5bec30f-Debug-macosx-arm64-build-headers-stale-file-removal>
             let nodeId = try readNodeId(row[2])
 
@@ -60,5 +61,12 @@ public class BuildGraphNodeTimingSqlReader: BuildGraphNodeTimingReader {
             throw BuildGraphNodeTimingSqlReaderError.unexpectedRowFormat(rowOptional)
         }
         return BuildGraphNodeId(id: String(nodeId.dropFirst()))
+    }
+
+    private func read<T>(_ rowOptional: Binding?) throws -> T {
+        guard let row = rowOptional, let value = row as? T  else {
+            throw BuildGraphNodeTimingSqlReaderError.unexpectedRowFormat(rowOptional)
+        }
+        return value
     }
 }

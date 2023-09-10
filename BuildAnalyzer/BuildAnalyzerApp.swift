@@ -20,7 +20,7 @@ struct BuildAnalyzerApp: App {
         Window(Self.DefaultTitle, id: "MainWindow") {
             var url: URL?
             let graphUrl = Binding(get: { url }, set: { newUrl in
-                guard let inputUrl = newUrl, let newUrlManifest = try? manifestFinder.findLatestManifest(options: .build(xcodeproj: inputUrl)), let newGraph = try? buildGraph(url: newUrlManifest.manifest) else {
+                guard let inputUrl = newUrl, let newUrlManifest = try? manifestFinder.findLatestManifest(options: .build(xcodeproj: inputUrl)), let newGraph = try? buildGraph(manifestLocation: newUrlManifest) else {
                     return
                 }
                 
@@ -32,7 +32,7 @@ struct BuildAnalyzerApp: App {
                     focus = nil
                 }
             })
-            let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection)
+            let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection, focus: $focus)
             AppView(
                 selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, web: webView
             )

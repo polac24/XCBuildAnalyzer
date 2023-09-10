@@ -53,8 +53,9 @@ class GraphWebViewController {
     private var currentProjection: BuildGraphProjection
     private var projector: D3BuildGraphProjector
     @Binding var selection: Set<String>
+    @Binding var focus: String?
 
-    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>) {
+    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>, focus: Binding<String?>) {
         self._graph = graph
         self._selection = selection
         let userContentController = WKUserContentController()
@@ -74,6 +75,7 @@ class GraphWebViewController {
         let currentProjection = BuildGraphProjectionImpl.init(nodes: [], type: .circular, highlightedEdges: [])
         projector = D3BuildGraphProjector(projection: currentProjection)
         self.currentProjection = currentProjection
+        self._focus = focus
         coordinator.onChange = { [weak self] action in
             self?.onUiAction(action: action)
         }
@@ -106,20 +108,18 @@ class GraphWebViewController {
 
 
         let newProjection = BuildGraphProjectionImpl(startingNodes: Set(filteredNodes))
-        // TODO: add path between nodes
         if filteredNodes.count > 1 {
             currentProjection = graph.expand(projection: newProjection, with: .path(nodes: Set(filteredNodes) ))
         } else {
-            for node in filteredNodes {
-                currentProjection = graph.expand(projection: newProjection, with: .inputs(of: node ))
-                currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: node ))
-                if graph.cycleNodes.contains(node) {
-                    let cycle = graph.cycles.first!
-                    //            currentProjection = graph.expand(projection: currentProjection, with: .cycle(of: bgNodeId, cycle: graph.cycles.first! ))
-                    currentProjection.highlightedEdges = Set(zip(cycle, cycle.dropFirst()).map { source, dest in
-                        BuildGraphEdge(source: source, destination: dest)
-                    })
-                }
+            let bgNodeId = filteredNodes[0]
+            currentProjection = graph.expand(projection: newProjection, with: .inputs(of: bgNodeId ))
+            currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
+            if graph.cycleNodes.contains(bgNodeId) {
+                let cycle = graph.cycles.first!
+                currentProjection = graph.expand(projection: currentProjection, with: .cycle(of: bgNodeId, cycle: graph.cycles.first! ))
+                currentProjection.highlightedEdges = Set(zip(cycle, cycle.dropFirst()).map { source, dest in
+                    BuildGraphEdge(source: source, destination: dest)
+                })
             }
         }
         refreshProjection(fresh: false)
@@ -154,7 +154,7 @@ class GraphWebViewController {
                 print("unknown d3 node. Probably the starting phase")
                 return
             }
-            selection = [nodeId.id]
+            focus = nodeId.id
             highlight(nodeId: nodeId.id)
             break
         }
@@ -232,8 +232,8 @@ class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHa
 struct GraphWebView: NSViewRepresentable {
     let controller: GraphWebViewController
 
-    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>) {
-        let controller = GraphWebViewController(graph: graph, graphUrl: graphUrl, selection: selection)
+    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>, focus: Binding<String?>) {
+        let controller = GraphWebViewController(graph: graph, graphUrl: graphUrl, selection: selection, focus: focus)
 
         self.controller = controller
     }

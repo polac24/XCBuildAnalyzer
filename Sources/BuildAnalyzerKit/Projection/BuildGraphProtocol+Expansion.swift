@@ -75,7 +75,6 @@ public extension BuildGraphProtocol {
         case .path(let nodes):
             // find path
             let path = nodeSwarm(nodes: nodes)
-            print(path)
             extraNodes.formUnion(Set(path))
         }
         newProjection.nodes[node.id] = projectionNode
@@ -166,7 +165,7 @@ public extension BuildGraphProtocol {
                 if let leftNodeShortestPathToEnd = shortestPaths[leftNode]?[endNode] {
                     // we found the shortest path between leftNode and startNode
                     let nodesToAddToSwarm = path.nodes.union(leftNodeShortestPathToEnd.nodes)
-                    // make sure it is connected with the rest of the resultNodes
+                    // pick only the path if it is connected with the rest of the resultNodes
                     if resultNodes.isEmpty ||  !resultNodes.isDisjoint(with: nodesToAddToSwarm) {
                         leftNodes.remove(leftNode)
                         leftNodes.remove(startNode)
@@ -188,7 +187,6 @@ public extension BuildGraphProtocol {
                 pathsToProcess.enqueue(path.withEnqueuedNode(neighbor))
             }
         }
-        // the graphs is disjoint and nodes do not have a common path
         return Array(resultNodes)
     }
 }
