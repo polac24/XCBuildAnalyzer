@@ -15,6 +15,8 @@ public enum BuildGraphProjectionExpansion {
     case outputs(of: BuildGraphNodeId, count: Int = 100)
     /// include a cycle of nodes
     case cycle(of: BuildGraphNodeId, cycle: [BuildGraphNodeId])
+    /// path between few nodes
+    case path(nodes: Set<BuildGraphNodeId>)
 }
 
 extension BuildGraphProjectionExpansion {
@@ -26,6 +28,9 @@ extension BuildGraphProjectionExpansion {
             return nodeId
         case .cycle(of: let nodeId, _):
             return nodeId
+        case .path(let nodes):
+            // take any node (pick left)
+            return nodes.first!
         }
     }
 }
@@ -39,6 +44,8 @@ extension BuildGraphProjectionExpansion {
             return 1
         case .cycle:
             return -2
+        case .path:
+            return 0
         }
     }
 }

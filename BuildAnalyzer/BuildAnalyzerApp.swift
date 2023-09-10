@@ -11,7 +11,7 @@ import BuildAnalyzerKit
 @main
 struct BuildAnalyzerApp: App {
     @State private var graph: BuildGraph = .empty
-    @State private var selection: String?
+    @State private var selection: Set<String> = []
     @State private var focus: String?
     private static let DefaultTitle = "BuildAnalyzer"
     @State private var windowTitle = Self.DefaultTitle
@@ -28,7 +28,7 @@ struct BuildAnalyzerApp: App {
                     url = newUrlManifest.manifest
                     windowTitle = newUrlManifest.projectFile?.absoluteString ?? Self.DefaultTitle
                     graph = newGraph
-                    selection = nil
+                    selection = []
                     focus = nil
                 }
             })

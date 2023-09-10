@@ -54,3 +54,12 @@ extension BuildGraphProjectionImpl {
         ], type: .flow, highlightedEdges: [])
     }
 }
+
+extension BuildGraphProjectionImpl {
+    public convenience init(startingNodes: Set<BuildGraphNodeId>) {
+        let allNodes = startingNodes.map { startingNodeId in
+            BuildGraphNodeProjectionNode(node: startingNodeId, inputNodes: [], outputNodes: [], hidesSomeInputs: true, hidesSomeOutputs: true, level: 0, highlighted: false)
+        }
+        self.init(nodes: allNodes, type: .flow, highlightedEdges: [])
+    }
+}
