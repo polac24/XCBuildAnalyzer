@@ -77,7 +77,7 @@ class D3BuildGraphProjector: BuildGraphProjector {
             let d3Reference = buildGraphNodesMapping[node.node]!
             // TODO: refactor to a better abstraction
             let label = buildTableLabel(node: node)
-            result.append("  \(d3Reference) [tooltip=\"\(node.node.id)\", xlabel=\"\", xlp=\"-20,-20\", label=\(label)\(isSelected ? ",color=\"#394662\"" : ",color=\"#404040\"")];")
+            result.append("  \(d3Reference) [tooltip=\"\(node.node.id)\", xlabel=\"\", xlp=\"-20,-20\", label=\(label)\(isSelected ? ",color=\"#394662\"" : "color=\"none\"")];")
         }
 
         for edge in edges.sorted(by: {$0.0 == $1.0 ? ($0.1 < $1.1 ) : $0.0 < $1.0 }) {
@@ -89,7 +89,7 @@ class D3BuildGraphProjector: BuildGraphProjector {
             if inverted {
                 result.append("  \(destination) -> \(source);")
             } else {
-                result.append("  \(source) -> \(destination) \(selected ? "[color=red]" :"" );")
+                result.append("  \(source) -> \(destination) \(selected ? "[color=\"#EED036\"]" :"" );")
             }
         }
         return result.joined(separator: " ")

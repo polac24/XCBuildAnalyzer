@@ -56,9 +56,9 @@ extension BuildGraphProjectionImpl {
 }
 
 extension BuildGraphProjectionImpl {
-    public convenience init(startingNodes: Set<BuildGraphNodeId>) {
+    public convenience init(startingNodes: Set<BuildGraphNodeId>, highlightedNodes: [BuildGraphNodeId]) {
         let allNodes = startingNodes.map { startingNodeId in
-            BuildGraphNodeProjectionNode(node: startingNodeId, inputNodes: [], outputNodes: [], hidesSomeInputs: true, hidesSomeOutputs: true, level: 0, highlighted: false)
+            BuildGraphNodeProjectionNode(node: startingNodeId, inputNodes: [], outputNodes: [], hidesSomeInputs: true, hidesSomeOutputs: true, level: 0, highlighted: highlightedNodes.contains(startingNodeId))
         }
         self.init(nodes: allNodes, type: .flow, highlightedEdges: [])
     }

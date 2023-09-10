@@ -42,7 +42,7 @@ struct AppView: View {
 
                     ZStack(alignment: .topLeading) {
                         web.onChange(of: selection) { newValue in
-                            web.controller.select(nodes: newValue)
+                            web.controller.select(nodes: newValue, focus: focus)
                         }.onChange(of: graph) { newValue in
                             web.controller.reset()
                             selection = []

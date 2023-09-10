@@ -22,7 +22,8 @@
 
     // Disable right click
     window.addEventListener('contextmenu', (event) => event.preventDefault());
-
+    var selectionColor = "#394662"
+    var noSelectionColor = "#404040"
     function deletePlaceholder() {
         var placeholder = document.getElementById("placeholder")
         var wrapper = document.getElementById("graph")
@@ -41,6 +42,10 @@
         if (message.graph || message.graph == "") {
             g.renderDot("strict digraph {edge [arrowhead=vee,color=\"#A8A8A8\",margin=0];"+message.extra+"node [shape=plaintext,style=filled,fontcolor=\"#E4E5E5\",color=\"#00000000\",margin=0,padding=0];\nrankdir=\"LR\";bgcolor=\"#404040\"\n" + message.graph+"\n}", startApp)
             }
+        if (message.highlight) {
+            unSelectNode()
+            selectNode(message.highlight)
+        }
       return ""
     }
 
@@ -56,7 +61,7 @@
     var selectedEdge = d3.select(null);
     var selectedEdgeFill;
     var selectedEdgeStroke;
-    var selectedNode = d3.select(null);
+    var selectedNodes = d3.select(null);
     var selectedNodeStroke;
     var selectedNodeFill;
     var isDown = false;
@@ -274,18 +279,15 @@
     }
 
     function selectNode(node) {
-        unSelectNode();
-        selectedNode = node;
-        selectedNodeFill = selectedNode.selectAll('polygon, ellipse').attr("fill");
-        selectedNodeStroke = selectedNode.selectAll('polygon, ellipse').attr("stroke");
-        selectedNode.selectAll('polygon, ellipse').attr("stroke", "red");
-        selectedNode.selectAll('polygon, ellipse').attr("fill", "red");
+        selectedNodes = d3.selectAll("a").filter(function() {
+            return d3.select(this).attr("title") == node;
+          }).selectAll('polygon');
+
+        selectedNodes.style('fill',selectionColor)
     }
 
     function unSelectNode() {
-        selectedNode.selectAll('polygon, ellipse').attr("stroke", selectedNodeStroke);
-        selectedNode.selectAll('polygon, ellipse').attr("fill", selectedNodeFill);
-        selectedNode = d3.select(null);
+        d3.selectAll("a").selectAll('polygon').style('fill', noSelectionColor)
     }
 
     function deleteSelectedNode() {

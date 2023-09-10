@@ -92,12 +92,13 @@ class GraphWebViewController {
         sendMessage(true, nil)
     }
 
-    func select(nodes: Set<String>) {
+    func select(nodes: Set<String>, focus: String?) {
         guard !nodes.isEmpty  else {
             // TOOD: consider reset view, but now leave it as is as the user might just unselect by mistake
             return
         }
         let bgNodeIds = nodes.map(BuildGraphNodeId.init(id:))
+        let highlightedNodeIds = focus.map(BuildGraphNodeId.init(id:))
         let filteredNodes = bgNodeIds.filter { nodeId in
             graph.nodes[nodeId] != nil
         }
@@ -106,8 +107,7 @@ class GraphWebViewController {
             return
         }
 
-
-        let newProjection = BuildGraphProjectionImpl(startingNodes: Set(filteredNodes))
+        let newProjection = BuildGraphProjectionImpl(startingNodes: Set(filteredNodes), highlightedNodes: [highlightedNodeIds].compactMap({$0}))
         if filteredNodes.count > 1 {
             currentProjection = graph.expand(projection: newProjection, with: .path(nodes: Set(filteredNodes) ))
         } else {
@@ -129,6 +129,12 @@ class GraphWebViewController {
     func highlight(nodeId: String?) {
         let bgNodeId = nodeId.map(BuildGraphNodeId.init(id:))
 
+        // e.g. N5
+        if let nodeId = nodeId {
+            // only select the node in d3  - not regenerate the entire render
+            sendRequest(D3PageRequest(option: .noop, highlight: nodeId))
+            return
+        }
         currentProjection = graph.highlight(nodeId: bgNodeId, projection: currentProjection)
         refreshProjection(fresh: false)
     }
@@ -161,8 +167,12 @@ class GraphWebViewController {
     }
 
     fileprivate func sendMessage(_ fresh: Bool, _ d3String: String?) {
+        let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: "")
+        sendRequest(request)
+    }
+
+    fileprivate func sendRequest(_ request: D3PageRequest) {
         do {
-            let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: "")
             let requestString = try coordinator.generateMessage(request).replacingOccurrences(of: "\"", with: "\\\"")
             webView.evaluateJavaScript("webkit.messageHandlers.bridge.onMessage = fromNative")
             webView.evaluateJavaScript("webkit.messageHandlers.bridge.onMessage('\(requestString)')")
@@ -170,7 +180,7 @@ class GraphWebViewController {
             print("Error in sending from Swift \(error)")
         }
     }
-    
+
     /// Rebuilds the projector and sends an event to JS
     /// - Parameter fresh: if true, a completely new view is generated and previous labels don't have to be reused
     private func refreshProjection(fresh: Bool) {
