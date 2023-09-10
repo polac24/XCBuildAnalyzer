@@ -54,7 +54,7 @@ struct GraphHierarchyView: View {
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                     if row.info?.contains(.active) == true { Image(systemName: "hammer.circle").help("Executed in a last build") }
-                    if row.info?.contains(.inCycle) == true { Image(systemName: "exclamationmark.arrow.circlepath").help("Exists in a cycle") }
+                    if row.info?.contains(.inCycle) == true { Image(systemName: "exclamationmark.arrow.circlepath").foregroundColor(.yellow).help("Exists in a cycle") }
                 }
             }
             TextField("Search", text: $searchRaw)

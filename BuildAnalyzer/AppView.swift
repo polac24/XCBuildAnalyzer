@@ -38,7 +38,7 @@ struct AppView: View {
                         search: $search,
                         focus: $focus,
                         hierarchyBuilder: hierarchyBuilder
-                    ).frame(minWidth: 300)
+                    ).frame(minWidth: 300).padding(.horizontal)
 
                     ZStack(alignment: .topLeading) {
                         web.onChange(of: selection) { newValue in

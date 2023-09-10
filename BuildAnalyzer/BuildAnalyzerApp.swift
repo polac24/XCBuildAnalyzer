@@ -13,7 +13,7 @@ struct BuildAnalyzerApp: App {
     @State private var graph: BuildGraph = .empty
     @State private var selection: Set<String> = []
     @State private var focus: String?
-    private static let DefaultTitle = "BuildAnalyzer"
+    private static let DefaultTitle = "XCBuildAnalyzer"
     @State private var windowTitle = Self.DefaultTitle
     private let manifestFinder = ManifestFinder()
     var body: some Scene {
