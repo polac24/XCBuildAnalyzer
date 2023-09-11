@@ -67,7 +67,9 @@ class GraphWebViewController {
 
         let _wkwebview = MyWK(graphUrl: graphUrl, configuration: configuration)
 #if DEBUG
-        _wkwebview.isInspectable = true
+        if #available(macOS 13.3, *) {
+            _wkwebview.isInspectable = true
+        }
 #endif
         self.webView = _wkwebview
         self.coordinator = coordinator

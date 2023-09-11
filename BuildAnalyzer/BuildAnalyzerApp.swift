@@ -20,7 +20,7 @@ struct BuildAnalyzerApp: App {
         Window(Self.DefaultTitle, id: "MainWindow") {
             var url: URL?
             let graphUrl = Binding(get: { url }, set: { newUrl in
-                guard let inputUrl = newUrl, let newUrlManifest = try? manifestFinder.findLatestManifest(options: .build(xcodeproj: inputUrl)), let newGraph = try? buildGraph(manifestLocation: newUrlManifest) else {
+                guard let inputUrl = newUrl, let newUrlManifest = try? manifestFinder.findLatestManifest(options: .build(project: inputUrl)), let newGraph = try? buildGraph(manifestLocation: newUrlManifest) else {
                     return
                 }
                 

@@ -11,14 +11,40 @@ import XcodeHasher
 enum ManifestFinderError: Error {
     case projectDictNotFound
     case manifestNotFound
+    case unknownPackageFormat(URL, Error?)
 }
 
 public struct ManifestFinderOptions {
-    let xcodeproj: URL
+    let project: URL
     let derivedData: URL?
 
-    static func build(xcodeproj: URL) -> Self {
-        ManifestFinderOptions(xcodeproj: xcodeproj, derivedData: nil)
+    static func build(project: URL) -> Self {
+        ManifestFinderOptions(project: project, derivedData: nil)
+    }
+
+    func guessProjectName() throws -> String  {
+        switch project.lastPathComponent {
+        case "Package.swift":
+            // heuristic to find a name with
+            /*
+
+             let package = Package(
+                name: "XCRemoteCache",
+             ....
+             */
+            do {
+                // assume the name is always at the top
+                let content = try String(String(contentsOf: project, encoding: .utf8))
+                guard let result = try /name\s*:\s*\"(?<name>\w+)\"/.firstMatch(in: content) else {
+                    throw ManifestFinderError.unknownPackageFormat(project, nil)
+                }
+                return String(result.output.name)
+            } catch {
+                throw ManifestFinderError.unknownPackageFormat(project, error)
+            }
+        default:
+            return project.deletingPathExtension().lastPathComponent
+        }
     }
 }
 
@@ -44,12 +70,13 @@ public struct ManifestFinder {
     public init() {}
 
     public func findLatestManifest(options: ManifestFinderOptions) throws -> ManifestLocation? {
-       let file = options.xcodeproj
+       let file = options.project
         switch file.pathExtension {
         case "json":
             return .init(projectFile: nil, manifest: file, timingDatabase: nil)
-        case "xcodeproj", "xcworkspace":
-            return try? findManifestFromProject(options: options)?.withProjectFile(options.xcodeproj)
+        case "xcodeproj", "xcworkspace", "swift":
+            // swift for Package.swift approach
+            return try? findManifestFromProject(options: options)?.withProjectFile(options.project)
         default:
             return nil
         }
@@ -81,7 +108,7 @@ public struct ManifestFinder {
             return explicitDerivedData
         }
 
-        let projectLocation = options.xcodeproj.deletingLastPathComponent()
+        let projectLocation = options.project.deletingLastPathComponent()
         if let customDerivedDataDir = getCustomDerivedDataDir(relativeTo: projectLocation) {
             return customDerivedDataDir
         }
@@ -92,12 +119,12 @@ public struct ManifestFinder {
     private func getProjectDir(options: ManifestFinderOptions,
                                derivedData: URL) throws -> URL {
         // when xcodebuild is run with -derivedDataPath or relative path the logs are at the root level
-        let projectName = options.xcodeproj.deletingPathExtension().lastPathComponent
+        let projectName = try options.guessProjectName()
         if FileManager.default.fileExists(atPath: derivedData.appendingPathComponent(projectName).path) {
             return derivedData.appendingPathComponent(projectName)
         }
         // look with project-hash directory
-        let folderName = try getProjectFolderNameWithHash(options.xcodeproj)
+        let folderName = try getProjectFolderNameWithHash(options.project)
         let hashedProjectDir = derivedData.appendingPathComponent(folderName)
         if FileManager.default.fileExists(atPath: hashedProjectDir.path) {
             return hashedProjectDir
