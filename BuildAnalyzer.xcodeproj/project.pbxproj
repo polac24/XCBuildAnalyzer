@@ -26,6 +26,8 @@
 		4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */; };
 		4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */; };
 		4E5C0C652A82898500170E3E /* GraphItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5C0C642A82898500170E3E /* GraphItemView.swift */; };
+		4E72663C2AB0066D00441D16 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E72663B2AB0066D00441D16 /* AlertView.swift */; };
+		4E72663E2AB00F9E00441D16 /* ManifestFinderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E72663D2AB00F9E00441D16 /* ManifestFinderError.swift */; };
 		4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */; };
 		4EBCFD372AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBCFD362AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift */; };
 		4EBCFD3B2AAA9E2500CD3AC9 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBCFD3A2AAA9E2500CD3AC9 /* AppView.swift */; };
@@ -69,6 +71,8 @@
 		4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3BuildGraphProjector.swift; sourceTree = "<group>"; };
 		4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3PageResponse.swift; sourceTree = "<group>"; };
 		4E5C0C642A82898500170E3E /* GraphItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphItemView.swift; sourceTree = "<group>"; };
+		4E72663B2AB0066D00441D16 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
+		4E72663D2AB00F9E00441D16 /* ManifestFinderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestFinderError.swift; sourceTree = "<group>"; };
 		4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestFinder.swift; sourceTree = "<group>"; };
 		4EBCFD362AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphHierarchyContentBuilder.swift; sourceTree = "<group>"; };
 		4EBCFD3A2AAA9E2500CD3AC9 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -106,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */,
+				4E72663D2AB00F9E00441D16 /* ManifestFinderError.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -173,6 +178,7 @@
 		4E3230292A40D39500118F54 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				4E72663A2AB0066400441D16 /* Alerts */,
 				4EBCFD382AAA9AFD00CD3AC9 /* DetailsView */,
 				4EBCFD352AAA96A900CD3AC9 /* HierarchyView */,
 				4E32303E2A411F0D00118F54 /* WebView */,
@@ -207,6 +213,14 @@
 				4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */,
 			);
 			path = D3Projector;
+			sourceTree = "<group>";
+		};
+		4E72663A2AB0066400441D16 /* Alerts */ = {
+			isa = PBXGroup;
+			children = (
+				4E72663B2AB0066D00441D16 /* AlertView.swift */,
+			);
+			path = Alerts;
 			sourceTree = "<group>";
 		};
 		4EBCFD352AAA96A900CD3AC9 /* HierarchyView */ = {
@@ -371,6 +385,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E32302D2A40D3BD00118F54 /* GraphWebView.swift in Sources */,
+				4E72663E2AB00F9E00441D16 /* ManifestFinderError.swift in Sources */,
 				4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */,
 				4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */,
 				4EBCFD3B2AAA9E2500CD3AC9 /* AppView.swift in Sources */,
@@ -378,6 +393,7 @@
 				4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */,
 				4EBCFD372AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift in Sources */,
 				4E32302B2A40D39C00118F54 /* GraphHierarchyView.swift in Sources */,
+				4E72663C2AB0066D00441D16 /* AlertView.swift in Sources */,
 				4E322FF72A3F79F000118F54 /* BuildAnalyzerApp.swift in Sources */,
 				4E5C0C652A82898500170E3E /* GraphItemView.swift in Sources */,
 			);

@@ -8,12 +8,6 @@
 import Foundation
 import XcodeHasher
 
-enum ManifestFinderError: Error {
-    case projectDictNotFound
-    case manifestNotFound
-    case unknownPackageFormat(URL, Error?)
-}
-
 public struct ManifestFinderOptions {
     let project: URL
     let derivedData: URL?
@@ -76,9 +70,9 @@ public struct ManifestFinder {
             return .init(projectFile: nil, manifest: file, timingDatabase: nil)
         case "xcodeproj", "xcworkspace", "swift":
             // swift for Package.swift approach
-            return try? findManifestFromProject(options: options)?.withProjectFile(options.project)
+            return try findManifestFromProject(options: options)?.withProjectFile(options.project)
         default:
-            return nil
+            throw ManifestFinderError.invalidFileFormat(options.project)
         }
 
     }
@@ -96,14 +90,12 @@ public struct ManifestFinder {
 
     private func getProjectDir(_ options: ManifestFinderOptions) throws -> URL {
         // get derivedDataDir
-        guard let derivedDataDir = getDerivedDataDir(options) else {
-            throw ManifestFinderError.projectDictNotFound
-        }
+        let derivedDataDir = getDerivedDataDir(options)
         // get project dir
         return try getProjectDir(options: options, derivedData: derivedDataDir)
     }
 
-    private func getDerivedDataDir(_ options: ManifestFinderOptions) -> URL? {
+    private func getDerivedDataDir(_ options: ManifestFinderOptions) -> URL {
         if let explicitDerivedData = options.derivedData {
             return explicitDerivedData
         }
@@ -120,7 +112,8 @@ public struct ManifestFinder {
                                derivedData: URL) throws -> URL {
         // when xcodebuild is run with -derivedDataPath or relative path the logs are at the root level
         let projectName = try options.guessProjectName()
-        if FileManager.default.fileExists(atPath: derivedData.appendingPathComponent(projectName).path) {
+        let ddDir = derivedData.appendingPathComponent(projectName)
+        if FileManager.default.fileExists(atPath: ddDir.path) {
             return derivedData.appendingPathComponent(projectName)
         }
         // look with project-hash directory
@@ -130,7 +123,7 @@ public struct ManifestFinder {
             return hashedProjectDir
         }
 
-        throw ManifestFinderError.projectDictNotFound
+        throw ManifestFinderError.projectDictionaryNotFound(lookupLocations: [ddDir, hashedProjectDir])
     }
 
     private func getCustomDerivedDataDir(relativeTo relative: URL) -> URL? {
