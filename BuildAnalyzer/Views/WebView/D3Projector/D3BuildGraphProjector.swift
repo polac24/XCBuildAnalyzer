@@ -70,7 +70,6 @@ class D3BuildGraphProjector: BuildGraphProjector {
 
     private func generate() -> String {
         var result: [String] = []
-//        var visitedNodes = Set<DotNode>()
 
         for node in projection.nodes.values.sorted(by: {$0.node.id < $1.node.id} ){
             let isSelected = node.highlighted

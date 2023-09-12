@@ -14,7 +14,7 @@ protocol GraphHierarchyContentBuilderProtocol {
 
 protocol GraphHierarchyGroup: Hashable, Comparable {
     var title: String { get }
-    static func build(from: BuildGraphNode.Kind) -> Self
+    static func build(from kind: BuildAnalyzerKit.BuildGraphNode.Kind, hintNode: BuildAnalyzerKit.BuildGraphNode?) -> Self
 }
 
 class GraphHierarchyContentBuilder<Group: GraphHierarchyGroup>: GraphHierarchyContentBuilderProtocol {
@@ -28,7 +28,7 @@ class GraphHierarchyContentBuilder<Group: GraphHierarchyGroup>: GraphHierarchyCo
         var types = [Group: [(BuildGraphNodeId, BuildGraphNode)]]()
 
         for (nodeId, node) in graph.nodes {
-            let kind = Group.build(from: node.kind)
+            let kind = Group.build(from: node.kind, hintNode: node)
             var newArray = types[kind, default: []]
             newArray.append((nodeId, node))
             types[kind] = newArray
@@ -62,20 +62,26 @@ struct GraphHierarchyTargetGroup: GraphHierarchyGroup {
         self.title = title
     }
 
-    static func build(from node: BuildAnalyzerKit.BuildGraphNode.Kind) -> GraphHierarchyTargetGroup {
-        switch node {
-        case .command(_,_, let target) where !target.isEmpty,
-                .packageResource(_, let target),
-                .complexStep(_, let target),
-                .packageProductStep(_, let target),
-                .packageTargetStep(_, let target): return .init(title: "[\(target)]")
+    static func build(from kind: BuildAnalyzerKit.BuildGraphNode.Kind, hintNode: BuildAnalyzerKit.BuildGraphNode? = nil) -> GraphHierarchyTargetGroup {
+        if let target = kind.target {
+            return .init(title: "[\(target)]")
+        }
+        switch kind {
         case .command(let stepName, _, _),
                 .simpleStep(let stepName, _),
                 .triggerStep(let stepName, _): return .init(title: stepName)
         case .end: return .init(title: "Ends")
-        case .file(_): return .init(title: "Files")
-        case .gate(_, let kind): return build(from: kind)
+        case .file(_):
+            // try to guess a target from an input or output
+            if let hintNode = hintNode,
+               let guessedTarget = hintNode.inputs.union(hintNode.outputs).lazy.compactMap({BuildGraphNode.Kind.generateKind(name:$0.id).target}).first {
+                return .init(title: "[\(guessedTarget)]")
+            }
+            return .init(title: "Files")
+        case .gate(_, let kind): return build(from: kind, hintNode: hintNode)
         case .other: return .init(title: "Others")
+        default:
+            return .init(title: "Unknown")
         }
     }
     

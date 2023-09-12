@@ -45,6 +45,18 @@ public extension BuildGraphNode {
             }
         }
 
+        public var target: String? {
+            switch self {
+            case .command(_,_, let target) where !target.isEmpty,
+                    .packageResource(_, let target),
+                    .complexStep(_, let target),
+                    .packageProductStep(_, let target),
+                    .packageTargetStep(_, let target): return target
+            default:
+                return nil
+            }
+        }
+
         public static func generateKind(name: String) -> Kind {
             do {
                 if name.first == "/" {
