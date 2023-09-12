@@ -82,10 +82,6 @@ public extension BuildGraphProtocol {
         let allNewNodes = extraNodes.union(newProjection.nodes.keys)
         // Add nodes that have been hoisted into the graph as an input/output
         for extraNodeId in extraNodes {
-            guard newProjection.nodes[extraNodeId] == nil else {
-                // it is already added to the graph projection (probably some other dependency already referenced it)
-                continue
-            }
             guard let extraNode = nodes[extraNodeId] else {
                 // consistency error
                 fatalError("Extra node is not available in the graph. Consistency error")
@@ -99,7 +95,7 @@ public extension BuildGraphProtocol {
                 hidesSomeInputs: !hasAllInputs,
                 hidesSomeOutputs: !hasAllOutputs,
                 level: projectionNode.level + expansion.levelDirection,
-                highlighted: false
+                highlighted: newProjection.nodes[extraNode.id]?.highlighted == true // keep the highlight if it already been highlighted
             )
         }
 
@@ -115,7 +111,7 @@ public extension BuildGraphProtocol {
         return newProjection
     }
 
-    // Returns a smallest subgraph that includes all nodes
+    // Returns a smallest subgraph that includes all connected nodes
     private func nodeSwarm(nodes swarmNodes: Set<BuildGraphNodeId>) -> [BuildGraphNodeId] {
         // make n-direction BDF search
 
@@ -181,7 +177,7 @@ public extension BuildGraphProtocol {
                     continue
                 }
                 if shortestPaths[startNode]![neighbor] != nil {
-                    // we have already found not worse path between them
+                    // we have already found not a worse path between them
                     continue
                 }
                 pathsToProcess.enqueue(path.withEnqueuedNode(neighbor))

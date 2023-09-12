@@ -26,7 +26,7 @@ struct AppView: View {
     @Binding var graph: BuildGraph
     @Binding var graphUrl: URL?
     let web: GraphWebView
-    private let hierarchyBuilder = GraphHierarchyContentBuilder()
+    private let hierarchyBuilder = GraphHierarchyContentBuilder<GraphHierarchyTargetGroup>()
 
     var body: some View {
         VStack {

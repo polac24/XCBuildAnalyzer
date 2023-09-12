@@ -29,7 +29,7 @@ extension BuildGraphProjectionExpansion {
         case .cycle(of: let nodeId, _):
             return nodeId
         case .path(let nodes):
-            // take any node (pick left)
+            // take any node (pick any)
             return nodes.first!
         }
     }

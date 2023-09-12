@@ -8,6 +8,7 @@ public extension BuildGraphNode {
             case simpleStep
             case complexStep
             case triggerStep
+            case packageResourceStep
             case packageProductStep
             case packageTargetStep
             case command
@@ -21,10 +22,11 @@ public extension BuildGraphNode {
         case triggerStep(stepName: String, args: [String])
         case end
         case complexStep(stepName: String, target: String)
+        case packageResource(stepName: String, target: String)
         case packageProductStep(stepName: String, target: String)
         case packageTargetStep(stepName: String, target: String)
         case gate(index: Int, kind: BuildGraphNode.Kind)
-        case command(stepName: String, args: [String])
+        case command(stepName: String, args: [String], target: String)
         case other(value: String)
 
         public var group:  Group {
@@ -35,6 +37,7 @@ public extension BuildGraphNode {
             case .triggerStep: return .triggerStep
             case .end: return .end
             case .complexStep: return .complexStep
+            case .packageResource: return .packageResourceStep
             case .packageProductStep: return .packageProductStep
             case .packageTargetStep: return .packageTargetStep
             case .gate: return .gate
@@ -56,13 +59,13 @@ public extension BuildGraphNode {
                     // wrap the "gate" into <> to match the expected format in generateKind
                     let gateKind = generateKind(name: "<\(o.gateName)>")
                     return .gate(index: Int(o.index) ?? 0, kind: gateKind)
-                } else if let result = try /P(?<index>\d+):(?<some>.*):(?<configuration>[^:]*):(?<stepName>\S+)(?: (?<args>.+))?/.firstMatch(in: name) {
+                } else if let result = try /P(?<index>\d+):(target-(?<target>[^-]+)-(?<some>.*))?:(?<configuration>[^:]*):(?<stepName>\S+)(?: (?<args>.+))?/.firstMatch(in: name) {
                     // e.g. P0:::CreateBuildDirectory /Some/DerivedData/BuildAnalyzer/Build/Intermediates.noindex
                     // P0:target-BuildAnalyzer-be0c796e7ab161295c9e11c90ddae75a2b86e3aa1cc2f374c8ee86a36d7adc00-:Debug:CpResource /Users/bartosz/Development/BuildAnalyzer/DerivedData/BuildAnalyzer/Build/Products/Debug/BuildAnalyzer.app/Contents/Resources/img /Users/bartosz/Development/BuildAnalyzer/BuildAnalyzer/Resources/img
 
                     let o = result.output
                     // wrap the "gate" into <> to match the expected format in generateKind
-                    return .command(stepName: String(o.stepName), args:o.args?.components(separatedBy: " ") ?? [])
+                    return .command(stepName: String(o.stepName), args:o.args?.components(separatedBy: " ") ?? [], target: String(o.target ?? ""))
                 } else if let result = try /<TRIGGER: (?<stepName>[^-]+)[ \-](?<args>\/.+)>/.firstMatch(in: name) {
                     // e.g. <CodeSign /SomePath/Build/Products/Debug/BuildAnalyzer.app>
                     // e.g. <CreateBuildDirectory-/SomePath/DerivedData/BuildAnalyzer/Build/Products>>
@@ -72,6 +75,10 @@ public extension BuildGraphNode {
                     // e.g. <target-BuildAnalyzer-be0c796e7ab161295c9e11c90ddae75a2b86e3aa1cc2f374c8ee86a36d7adc00--TAPISymbolExtractorTaskProducer>
                     let o = result.output
                     return .complexStep(stepName: String(o.stepName), target: String(o.targetName))
+                } else if let result = try /<target-(?<targetNameModule>[^-]+_)?(?<targetName>[^-]+)-PACKAGE-RESOURCE.*:(?<stepName>[^:]+)>/.firstMatch(in: name) {
+                    // e.g. <target-XCRemoteCache_XCRemoteCacheTests-PACKAGE-RESOURCE:XCRemoteCacheTests-SDKROOT:macosx:SDK_VARIANT:macos-entry>
+                    let o = result.output
+                    return .packageResource(stepName: String(o.stepName), target: String(o.targetName))
                 } else if let result = try /<target-(?<targetName>[^-]+)-PACKAGE-PRODUCT:(?<target>[^-]+)-(?<configuration>[^-]+)-(?<platform>[^-]+)-(?<arch>[^-]+)-(?<stepName>.+)>/.firstMatch(in: name) {
                     // e.g. <target-BuildAnalyzerKit-PACKAGE-PRODUCT:BuildAnalyzerKit-Debug-macosx-arm64-build-headers-stale-file-removal>
                     let o = result.output

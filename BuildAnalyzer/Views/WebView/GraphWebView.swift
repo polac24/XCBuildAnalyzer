@@ -234,8 +234,7 @@ class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHa
     }
 
     func generateMessage(_ message: D3PageRequest) throws -> String {
-        var safeMessage = message
-        return try String(data: encoder.encode(safeMessage), encoding: .utf8)!
+        return try String(data: encoder.encode(message), encoding: .utf8)!
     }
 
 }

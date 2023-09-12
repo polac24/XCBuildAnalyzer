@@ -12,7 +12,12 @@ protocol GraphHierarchyContentBuilderProtocol {
     func build(from graph: BuildGraphProtocol) -> [GraphHierarchyElement]
 }
 
-class GraphHierarchyContentBuilder: GraphHierarchyContentBuilderProtocol {
+protocol GraphHierarchyGroup: Hashable, Comparable {
+    var title: String { get }
+    static func build(from: BuildGraphNode.Kind) -> Self
+}
+
+class GraphHierarchyContentBuilder<Group: GraphHierarchyGroup>: GraphHierarchyContentBuilderProtocol {
     private var cache: (BuildGraphProtocol, [GraphHierarchyElement])?
 
     func build(from graph: BuildGraphProtocol) -> [GraphHierarchyElement] {
@@ -20,10 +25,10 @@ class GraphHierarchyContentBuilder: GraphHierarchyContentBuilderProtocol {
         if let cached = cache, cached.0 === graph {
             return cached.1
         }
-        var types = [BuildGraphNode.Kind.Group: [(BuildGraphNodeId, BuildGraphNode)]]()
+        var types = [Group: [(BuildGraphNodeId, BuildGraphNode)]]()
 
         for (nodeId, node) in graph.nodes {
-            let kind = node.kind.group
+            let kind = Group.build(from: node.kind)
             var newArray = types[kind, default: []]
             newArray.append((nodeId, node))
             types[kind] = newArray
@@ -44,10 +49,38 @@ class GraphHierarchyContentBuilder: GraphHierarchyContentBuilderProtocol {
             let allInfos: GraphHierarchyElementInfo = elements.map(\.info).compactMap({$0}).reduce([]) { info, element in
                 return [element, info]
             }
-            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind.groupDescription)", info: allInfos, items: elements))
+            result.append(GraphHierarchyElement(id: "\(kind)", name: "\(kind.title)", info: allInfos, items: elements))
         }
         cache = (graph, result)
         return result
+    }
+}
+
+struct GraphHierarchyTargetGroup: GraphHierarchyGroup {
+    var title: String
+    init(title: String) {
+        self.title = title
+    }
+
+    static func build(from node: BuildAnalyzerKit.BuildGraphNode.Kind) -> GraphHierarchyTargetGroup {
+        switch node {
+        case .command(_,_, let target) where !target.isEmpty,
+                .packageResource(_, let target),
+                .complexStep(_, let target),
+                .packageProductStep(_, let target),
+                .packageTargetStep(_, let target): return .init(title: "[\(target)]")
+        case .command(let stepName, _, _),
+                .simpleStep(let stepName, _),
+                .triggerStep(let stepName, _): return .init(title: stepName)
+        case .end: return .init(title: "Ends")
+        case .file(_): return .init(title: "Files")
+        case .gate(_, let kind): return build(from: kind)
+        case .other: return .init(title: "Others")
+        }
+    }
+    
+    static func < (lhs: GraphHierarchyTargetGroup, rhs: GraphHierarchyTargetGroup) -> Bool {
+        lhs.title < rhs.title
     }
 }
 
@@ -62,7 +95,8 @@ extension BuildGraphNode.Kind {
             return "[\(stepName)] Trigger \(args.joined(separator: " "))"
         case .end:
             return "end"
-        case let .complexStep(stepName: stepName, target: target):
+        case let .complexStep(stepName: stepName, target: target),
+                .packageResource(stepName: let stepName, target: let target):
             return "[\(target)] \(stepName)"
         case let .packageProductStep(stepName: stepName, target: target):
             return "[\(target)] \(stepName) (ProductStep)"
@@ -70,27 +104,10 @@ extension BuildGraphNode.Kind {
             return "[\(target)] \(stepName) (TargetStep)"
         case let .gate(index: _, kind: kind):
             return "Gate \(kind.humanDescription)"
-        case let .command(stepName: stepName, args: args):
+        case let .command(stepName: stepName, args: args, target: _):
             return "[\(stepName)] \(args.joined(separator: " "))"
         case let .other(value: value):
             return value
-        }
-    }
-}
-
-extension BuildGraphNode.Kind.Group {
-    var groupDescription: String {
-        switch self {
-        case .file: return "Files"
-        case .other: return "Others"
-        case .simpleStep: return "Simple steps"
-        case .triggerStep: return "Trigger steps"
-        case .end: return "End"
-        case .complexStep: return "Complex steps"
-        case .packageProductStep: return "Package Product steps"
-        case .packageTargetStep: return "Package target steps"
-        case .gate: return "Gates"
-        case .command: return "Commands"
         }
     }
 }

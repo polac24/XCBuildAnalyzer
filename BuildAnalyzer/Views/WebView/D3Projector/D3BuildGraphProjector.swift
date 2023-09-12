@@ -83,14 +83,8 @@ class D3BuildGraphProjector: BuildGraphProjector {
         for edge in edges.sorted(by: {$0.0 == $1.0 ? ($0.1 < $1.1 ) : $0.0 < $1.0 }) {
             let source = buildGraphNodesMapping[edge.0.node]!
             let destination = buildGraphNodesMapping[edge.1.node]!
-            // testing which format is better in UI
-            let inverted = false
             let selected = projection.highlightedEdges.contains(.init(source: edge.1.node, destination: edge.0.node))
-            if inverted {
-                result.append("  \(destination) -> \(source);")
-            } else {
-                result.append("  \(source) -> \(destination) \(selected ? "[color=\"#EED036\"]" :"" );")
-            }
+            result.append("  \(source) -> \(destination) \(selected ? "[color=\"#EED036\"]" :"" );")
         }
         return result.joined(separator: " ")
     }
