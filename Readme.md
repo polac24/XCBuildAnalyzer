@@ -6,7 +6,7 @@ macOS app to inspect Xcode's build system graph
 
 XCBuildAnalyzer is a standalone macOS app that renders the Xcode build system graph with some (limited) timing data. Analyzing the graph might be useful to understand dependencies between particular steps and why does build system invalidates previous build results. 
 
-The tool relies on a build manifest json file that is always generated in the project DerivedData directory (Xcode 15.0+ required).   
+The tool relies on a build manifest json file that is always generated in the project DerivedData directory.
 
 ![Demo](docs/img/demo.gif)
 
@@ -76,7 +76,7 @@ By default, XCBuildAnalyzer finds the most recent graph manifest found in the De
 
 ### Requirements
 
-* Building a project with Xcode 15+
+* Building a project at least once with Xcode
 
 ### Supported formats
 

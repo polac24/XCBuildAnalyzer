@@ -68,6 +68,8 @@ public struct ManifestFinder {
         switch file.pathExtension {
         case "json":
             return .init(projectFile: nil, manifest: file, timingDatabase: nil)
+        case "xcbuild" where file.lastPathComponent.hasSuffix("-manifest.xcbuild"):
+            return .init(projectFile: nil, manifest: file, timingDatabase: nil)
         case "xcodeproj", "xcworkspace", "swift":
             // swift for Package.swift approach
             return try findManifestFromProject(options: options)?.withProjectFile(options.project)
@@ -146,7 +148,13 @@ public struct ManifestFinder {
         let files = try fileManager.contentsOfDirectory(at: dir,
                                                         includingPropertiesForKeys: [.contentModificationDateKey],
                                                         options: .skipsHiddenFiles)
-        let sorted = try files.filter { $0.path.hasSuffix(".xcbuilddata") }.sorted {
+        // Xcode 15+ uses .xcbuilddata
+        // older uses dirs with buildDebugging- prefix or {hash}-manifest.xcbuild
+        let sorted = try files.filter {
+            $0.path.hasSuffix(".xcbuilddata") ||
+            $0.path.hasPrefix("buildDebugging-") ||
+            $0.path.hasSuffix("-manifest.xcbuild")
+        }.sorted {
             let lhv = try $0.resourceValues(forKeys: [.contentModificationDateKey])
             let rhv = try $1.resourceValues(forKeys: [.contentModificationDateKey])
             guard let lhDate = lhv.contentModificationDate, let rhDate = rhv.contentModificationDate else {
@@ -154,12 +162,23 @@ public struct ManifestFinder {
             }
             return lhDate.compare(rhDate) == .orderedDescending
         }
-        guard let xcBuildData = sorted.first else {
+        guard let xcBuildDataOrManifest = sorted.first else {
             throw ManifestFinderError.manifestNotFound
         }
         // Find manifest.json
 
-        let manifest = xcBuildData.appending(component: "manifest.json")
+        let potentialManifests = [
+            xcBuildDataOrManifest,
+            xcBuildDataOrManifest.appending(component: "manifest.json"),
+            xcBuildDataOrManifest.appending(component: "current-manifest.xcbuild")
+            ]
+        let existingManifests = potentialManifests.filter { url in
+            var isDir: ObjCBool = false
+            return fileManager.fileExists(atPath: url.path, isDirectory: &isDir) && !isDir.boolValue
+        }
+        guard let manifest = existingManifests.first else {
+            throw ManifestFinderError.manifestNotFound
+        }
         // the "main" .db corresponds to the most recent manifest
         let timingDb = dir.appending(component: "build.db")
         return ManifestLocation(projectFile: nil, manifest: manifest, timingDatabase: timingDb)
