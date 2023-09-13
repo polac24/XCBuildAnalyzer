@@ -66,6 +66,7 @@ class GraphWebViewController {
         configuration.userContentController = userContentController
 
         let _wkwebview = MyWK(graphUrl: graphUrl, configuration: configuration)
+        _wkwebview.navigationDelegate = coordinator
 #if DEBUG
         if #available(macOS 13.3, *) {
             _wkwebview.isInspectable = true
@@ -238,6 +239,10 @@ class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHa
         return try String(data: encoder.encode(message), encoding: .utf8)!
     }
 
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        // finally ready to present without blinking black/white/background color
+        webView.isHidden = false
+    }
 }
 
 
@@ -256,6 +261,8 @@ struct GraphWebView: NSViewRepresentable {
 
 
     func updateNSView(_ webView: WKWebView, context: Context) {
+        // do not show initially to not "blink"
+        webView.isHidden = true
         guard let path: String = Bundle.main.path(forResource: "index", ofType: "html") else { return }
         let localHTMLUrl = URL(fileURLWithPath: path, isDirectory: false)
         let resources = localHTMLUrl.deletingLastPathComponent()
