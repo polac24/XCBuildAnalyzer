@@ -225,55 +225,8 @@
 
         });
 
-        // click and mousedown on edges
-        edges.on("click", function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            unSelectNode();
-            selectEdge(d3.select(this));
-        });
-
-        // right-click outside of nodes
-        d3.select(document).on("contextmenu", function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            unSelectEdge();
-        });
-
     }
 
-    function selectEdge(edge) {
-        unSelectEdge();
-        selectedEdge = edge;
-        selectedEdgeFill = selectedEdge.selectAll('polygon').attr("fill");
-        selectedEdgeStroke = selectedEdge.selectAll('polygon').attr("stroke");
-        selectedEdge.selectAll('path, polygon').attr("stroke", "red");
-        selectedEdge.selectAll('polygon').attr("fill", "red");
-    }
-
-    function unSelectEdge() {
-        selectedEdge.selectAll('path, polygon').attr("stroke", selectedEdgeStroke);
-        selectedEdge.selectAll('polygon').attr("fill", selectedEdgeFill);
-        selectedEdge = d3.select(null);
-    }
-
-    function deleteSelectedEdge() {
-        selectedEdge.style("display", "none");
-        if (selectedEdge.size() != 0) {
-            var edgeName = selectedEdge.selectWithoutDataPropagation("title").text();
-            edgeName = edgeName.replace('->', ' -> ');
-            var dotSrcLines = dotSrc.split('\n');
-            while (true) {
-                var i = dotSrcLines.findIndex(function (element, index) {
-                    return element.indexOf(edgeName) >= 0;
-                });
-                if (i < 0)
-                    break;
-                dotSrcLines.splice(i, 1);
-            }
-            dotSrc = dotSrcLines.join('\n');
-        }
-    }
 
     function selectNode(node) {
         selectedNodes = d3.selectAll("a").filter(function() {
