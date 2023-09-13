@@ -110,7 +110,7 @@ class D3BuildGraphProjector: BuildGraphProjector {
         case .other:
             path += "question"
         case .end:
-            path += "scope"
+            path += "stop"
         default:
             path += "cube"
         }
