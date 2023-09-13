@@ -19,26 +19,15 @@ public struct ManifestFinderOptions {
     func guessProjectName() throws -> String  {
         switch project.lastPathComponent {
         case "Package.swift":
-            // heuristic to find a name with
-            /*
-
-             let package = Package(
-                name: "XCRemoteCache",
-             ....
-             */
-            do {
-                // assume the name is always at the top
-                let content = try String(String(contentsOf: project, encoding: .utf8))
-                guard let result = try /name\s*:\s*\"(?<name>\w+)\"/.firstMatch(in: content) else {
-                    throw ManifestFinderError.unknownPackageFormat(project, nil)
-                }
-                return String(result.output.name)
-            } catch {
-                throw ManifestFinderError.unknownPackageFormat(project, error)
-            }
+            return try guessPackageProjectName(swiftPackage: project)
         default:
             return project.deletingPathExtension().lastPathComponent
         }
+    }
+
+    private func guessPackageProjectName(swiftPackage: URL) throws -> String {
+        // heuristic to find a project as the directory name of a Package.swift location
+        return swiftPackage.deletingLastPathComponent().lastPathComponent
     }
 }
 
