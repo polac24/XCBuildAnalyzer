@@ -24,6 +24,21 @@ public protocol BuildGraphProjection {
     var highlightedEdges: Set<BuildGraphEdge> {get set}
 }
 
+public extension BuildGraphProjection {
+    var highlightedNodes: Set<BuildGraphNodeId> {
+        set {
+            nodes = nodes.mapValues { node in
+                var newNode = node
+                newNode.highlighted = newValue.contains(node.node)
+                return newNode
+            }
+        }
+        get {
+            Set(nodes.values.filter({$0.highlighted}).map(\.node))
+        }
+    }
+}
+
 // Consider skipping the Protocol/Impl
 public class BuildGraphProjectionImpl: BuildGraphProjection {
     public let type: BuildGraphProjectionLayoutType

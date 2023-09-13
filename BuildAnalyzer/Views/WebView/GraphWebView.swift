@@ -164,6 +164,7 @@ class GraphWebViewController {
             }
             focus = nodeId.id
             highlight(nodeId: nodeId.id)
+            currentProjection.highlightedNodes = Set([.init(id: nodeId.id)])
             break
         }
     }

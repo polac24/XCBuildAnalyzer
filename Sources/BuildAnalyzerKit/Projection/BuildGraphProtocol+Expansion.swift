@@ -95,7 +95,7 @@ public extension BuildGraphProtocol {
                 hidesSomeInputs: !hasAllInputs,
                 hidesSomeOutputs: !hasAllOutputs,
                 level: projectionNode.level + expansion.levelDirection,
-                highlighted: newProjection.nodes[extraNode.id]?.highlighted == true // keep the highlight if it already been highlighted
+                highlighted: projection.nodes[extraNode.id]?.highlighted == true // keep the highlight if it already been highlighted
             )
         }
 
