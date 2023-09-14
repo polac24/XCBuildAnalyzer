@@ -19,7 +19,7 @@ public enum BuildGraphProjectionLayoutType {
 /// The`BuildGraphView` might be a better name, but to not mislead with UI views
 /// using a "projection" term
 public protocol BuildGraphProjection {
-    var type: BuildGraphProjectionLayoutType  { get }
+    var type: BuildGraphProjectionLayoutType  { get set }
     var nodes: [BuildGraphNodeId: BuildGraphNodeProjectionNode] { get set }
     var highlightedEdges: Set<BuildGraphEdge> {get set}
 }
@@ -41,7 +41,7 @@ public extension BuildGraphProjection {
 
 // Consider skipping the Protocol/Impl
 public class BuildGraphProjectionImpl: BuildGraphProjection {
-    public let type: BuildGraphProjectionLayoutType
+    public var type: BuildGraphProjectionLayoutType
     public var nodes: [BuildGraphNodeId: BuildGraphNodeProjectionNode]
     public var highlightedEdges: Set<BuildGraphEdge>
 

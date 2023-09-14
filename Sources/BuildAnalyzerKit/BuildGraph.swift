@@ -116,8 +116,7 @@ public extension BuildGraph {
                     continue
                 }
                 if let index = history.firstIndex(of: node) {
-                    // we found a cycle
-                    // TODO: trim the history to the cycle only
+                    // we found a cycle and return only a subset of nodes (ones that exist in a cycle)
                     cycles.append(history[index...] + [node])
                     allNodesToTraverse.remove(node)
                     continue

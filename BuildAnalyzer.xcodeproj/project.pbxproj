@@ -31,6 +31,7 @@
 		4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */; };
 		4EBCFD372AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBCFD362AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift */; };
 		4EBCFD3B2AAA9E2500CD3AC9 /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBCFD3A2AAA9E2500CD3AC9 /* AppView.swift */; };
+		4EF5BB3B2AB29D72002E98FB /* D3PageRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF5BB3A2AB29D72002E98FB /* D3PageRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,6 +77,7 @@
 		4E7BD0FF2A9A1C9B003C8610 /* ManifestFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManifestFinder.swift; sourceTree = "<group>"; };
 		4EBCFD362AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphHierarchyContentBuilder.swift; sourceTree = "<group>"; };
 		4EBCFD3A2AAA9E2500CD3AC9 /* AppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
+		4EF5BB3A2AB29D72002E98FB /* D3PageRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = D3PageRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,6 +213,7 @@
 			children = (
 				4E36CA272A48FF5E0003CBA3 /* D3BuildGraphProjector.swift */,
 				4E36CA292A4900F10003CBA3 /* D3PageResponse.swift */,
+				4EF5BB3A2AB29D72002E98FB /* D3PageRequest.swift */,
 			);
 			path = D3Projector;
 			sourceTree = "<group>";
@@ -389,6 +392,7 @@
 				4E7B3BE12A9A251F00C9DC5E /* ManifestFinder.swift in Sources */,
 				4E36CA2A2A4900F10003CBA3 /* D3PageResponse.swift in Sources */,
 				4EBCFD3B2AAA9E2500CD3AC9 /* AppView.swift in Sources */,
+				4EF5BB3B2AB29D72002E98FB /* D3PageRequest.swift in Sources */,
 				4E3230342A40D76A00118F54 /* GraphHierarchyElement.swift in Sources */,
 				4E36CA282A48FF5E0003CBA3 /* D3BuildGraphProjector.swift in Sources */,
 				4EBCFD372AAA96DA00CD3AC9 /* GraphHierarchyContentBuilder.swift in Sources */,

@@ -92,7 +92,7 @@ class GraphWebViewController {
     }
 
     func resetZoom() {
-        sendMessage(true, nil)
+        sendMessage(true, nil, extra: "")
     }
 
     func select(nodes: Set<String>, focus: String?) {
@@ -115,14 +115,17 @@ class GraphWebViewController {
             currentProjection = graph.expand(projection: newProjection, with: .path(nodes: Set(filteredNodes) ))
         } else {
             let bgNodeId = filteredNodes[0]
-            currentProjection = graph.expand(projection: newProjection, with: .inputs(of: bgNodeId ))
-            currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
-            if graph.cycleNodes.contains(bgNodeId) {
-                let cycle = graph.cycles.first!
-                currentProjection = graph.expand(projection: currentProjection, with: .cycle(of: bgNodeId, cycle: graph.cycles.first! ))
+            // do not show all inputs/outputs if a cycle has been detected to not make too many lines that might make it less readable
+            if graph.cycleNodes.contains(bgNodeId), let cycle = graph.cycles.first(where: {$0.contains(bgNodeId)}) {
+                currentProjection = graph.expand(projection: newProjection, with: .cycle(of: bgNodeId, cycle: cycle ))
                 currentProjection.highlightedEdges = Set(zip(cycle, cycle.dropFirst()).map { source, dest in
                     BuildGraphEdge(source: source, destination: dest)
                 })
+                // the cycle includes duplicated node
+                currentProjection.type = .circular
+            } else {
+                currentProjection = graph.expand(projection: newProjection, with: .inputs(of: bgNodeId ))
+                currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
             }
         }
         refreshProjection(fresh: false)
@@ -170,8 +173,8 @@ class GraphWebViewController {
         }
     }
 
-    fileprivate func sendMessage(_ fresh: Bool, _ d3String: String?) {
-        let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: "")
+    fileprivate func sendMessage(_ fresh: Bool, _ d3String: String?, extra: String) {
+        let request = D3PageRequest(option: .init(reset: fresh), graph: d3String, extra: extra)
         sendRequest(request)
     }
 
@@ -193,7 +196,7 @@ class GraphWebViewController {
         let startingMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = projector.buildGraphNodesMapping
         projector = D3BuildGraphProjector(projection: currentProjection, buildGraphNodesMapping: startingMapping)
         let d3String = projector.build()
-        sendMessage(fresh, d3String)
+        sendMessage(fresh, d3String, extra: currentProjection.type.modifier)
     }
 }
 
@@ -274,5 +277,15 @@ struct GraphWebView: NSViewRepresentable {
 class D3GraphMessageFactory {
     func generate(projection: BuildGraphProjection) -> String {
         return ""
+    }
+}
+
+extension BuildGraphProjectionLayoutType {
+    // the extra modifier that should be added to the digraph to generate a given projection
+    var modifier: String {
+        switch self {
+        case .circular: "" // Circo layout is not great in finding a cycle "layout=circo;"
+        case .flow: "" // it is a default
+        }
     }
 }

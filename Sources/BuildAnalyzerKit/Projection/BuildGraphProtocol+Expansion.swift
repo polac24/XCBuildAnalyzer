@@ -69,7 +69,6 @@ public extension BuildGraphProtocol {
             projectionNode.outputNodes = projectionNode.outputNodes.union(expansionOutputs)
             projectionNode.hidesSomeOutputs = projectionNode.outputNodes.count != node.outputs.count
         case .cycle(_, let cycle):
-            // TODO
             extraNodes = Set(cycle)
             break
         case .path(let nodes):
