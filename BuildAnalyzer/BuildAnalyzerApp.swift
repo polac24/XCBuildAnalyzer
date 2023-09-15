@@ -18,6 +18,7 @@ struct BuildAnalyzerApp: App {
     private let manifestFinder = ManifestFinder()
     @State private var presentationError: ManifestFinderError?
     @State private var loading: Bool = false
+    @State private var graphStyle: GraphLayoutStyle = .standard
 
     var body: some Scene {
         Window(Self.DefaultTitle, id: "MainWindow") {
@@ -55,7 +56,7 @@ struct BuildAnalyzerApp: App {
             })
             let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection, focus: $focus)
             AppView(
-                selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, web: webView, error: $presentationError, loading: $loading
+                selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, graphLayout: $graphStyle, web: webView, error: $presentationError, loading: $loading
             )
         }
     }

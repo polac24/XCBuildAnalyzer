@@ -54,6 +54,7 @@ class GraphWebViewController {
     private var projector: D3BuildGraphProjector
     @Binding var selection: Set<String>
     @Binding var focus: String?
+    private var layout: GraphLayoutStyle = .standard
 
     init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>, focus: Binding<String?>) {
         self._graph = graph
@@ -75,7 +76,7 @@ class GraphWebViewController {
         self.webView = _wkwebview
         self.coordinator = coordinator
 
-        let currentProjection = BuildGraphProjectionImpl.init(nodes: [], type: .circular, highlightedEdges: [])
+        let currentProjection = BuildGraphProjectionImpl.init(nodes: [], type: .flow, highlightedEdges: [])
         projector = D3BuildGraphProjector(projection: currentProjection)
         self.currentProjection = currentProjection
         self._focus = focus
@@ -92,7 +93,12 @@ class GraphWebViewController {
     }
 
     func resetZoom() {
-        sendMessage(true, nil, extra: "")
+        sendMessage(true, nil, extra: getLayoutExtra())
+    }
+
+    func setLayout(_ layout: GraphLayoutStyle) {
+        self.layout = layout
+        sendMessage(true,  projector.build(), extra: getLayoutExtra())
     }
 
     func select(nodes: Set<String>, focus: String?) {
@@ -196,7 +202,11 @@ class GraphWebViewController {
         let startingMapping: [BuildGraphNodeId: D3BuildGraphNodeId] = projector.buildGraphNodesMapping
         projector = D3BuildGraphProjector(projection: currentProjection, buildGraphNodesMapping: startingMapping)
         let d3String = projector.build()
-        sendMessage(fresh, d3String, extra: currentProjection.type.modifier)
+        sendMessage(fresh, d3String, extra: getLayoutExtra())
+    }
+
+    private func getLayoutExtra() -> String {
+        layout == .circo ?  "layout=circo;" : ""
     }
 }
 

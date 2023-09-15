@@ -25,6 +25,7 @@ struct AppView: View {
     @State private var search: String = ""
     @Binding var graph: BuildGraph
     @Binding var graphUrl: URL?
+    @Binding var graphLayout: GraphLayoutStyle
     let web: GraphWebView
     private let hierarchyBuilder = GraphHierarchyContentBuilder<GraphHierarchyTargetGroup>()
     @Binding var error: ManifestFinderError?
@@ -53,12 +54,19 @@ struct AppView: View {
                                 web.controller.coordinator.setBinding($selection)
                             }
 
-                            Button<Text>("◎") {
-                                web.controller.resetZoom()
+                            HStack {
+                                Button<Text>("❖") {
+                                    web.controller.resetZoom()
+                                }
+                                .help("Reset zoom")
+
+                                Toggle("◎", isOn: .init(get: { graphLayout == .circo }, set: {graphLayout = $0 ? .circo : .standard; web.controller.setLayout(graphLayout)}))
+                                    .help("Circular layout")
+                                    .toggleStyle(.button)
                             }
-                            .help("Reset zoom")
-                            .padding(5)
                             .opacity(graph.nodes.isEmpty ? 0 : 1)
+                            .padding(5)
+
                         }.layoutPriority(1000)
 
                         GraphItemView (
