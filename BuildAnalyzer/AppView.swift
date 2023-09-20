@@ -19,7 +19,12 @@ func buildGraph(manifestLocation: ManifestLocation) throws -> BuildGraph {
     return BuildGraph(manifest: manifest, timings: timings)
 }
 
+class AppAlternatives: ObservableObject {
+    @Published var command: Bool = false
+}
+
 struct AppView: View {
+
     @Binding var selection: Set<String>
     @Binding var focus: String?
     @State private var search: String = ""
@@ -63,6 +68,7 @@ struct AppView: View {
                                 Toggle("◎", isOn: .init(get: { graphLayout == .circo }, set: {graphLayout = $0 ? .circo : .standard; web.controller.setLayout(graphLayout)}))
                                     .help("Circular layout")
                                     .toggleStyle(.button)
+
                             }
                             .opacity(graph.nodes.isEmpty ? 0 : 1)
                             .padding(5)

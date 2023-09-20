@@ -10,20 +10,33 @@ import Foundation
 struct BuildGraphPath: Hashable {
     let path: [BuildGraphNodeId]
     let nodes: Set<BuildGraphNodeId>
+    let startingNode: BuildGraphNodeId
+    var endingNode: BuildGraphNodeId {
+        path.last ?? startingNode
+    }
 
-    init(path: [BuildGraphNodeId], nodes: Set<BuildGraphNodeId>) {
+    init(startingNode: BuildGraphNodeId, path: [BuildGraphNodeId], nodes: Set<BuildGraphNodeId>) {
+        self.startingNode = startingNode
         self.path = path
         self.nodes = nodes
     }
 
     func withEnqueuedNode(_ node: BuildGraphNodeId) -> BuildGraphPath {
-        return BuildGraphPath(path: path + [node], nodes: nodes.union([node]))
+        return BuildGraphPath(startingNode: startingNode, path: path + [node], nodes: nodes.union([node]))
     }
 
     init(node: BuildGraphNodeId) {
+        self.startingNode = node
         self.path = [node]
         self.nodes = [node]
     }
+}
+
+struct SwarmNodesDirections: OptionSet {
+    let rawValue: Int
+
+    static let output = SwarmNodesDirections(rawValue: 1 << 0)
+    static let input = SwarmNodesDirections(rawValue: 1 << 1)
 }
 
 public extension BuildGraphProtocol {
@@ -73,7 +86,7 @@ public extension BuildGraphProtocol {
             break
         case .path(let nodes):
             // find path
-            let path = nodeSwarm(nodes: nodes)
+            let path = nodeSwarm(nodes: nodes, direction: .output)
             extraNodes.formUnion(Set(path))
         }
         newProjection.nodes[node.id] = projectionNode
@@ -111,7 +124,7 @@ public extension BuildGraphProtocol {
     }
 
     // Returns a smallest subgraph that includes all connected nodes
-    private func nodeSwarm(nodes swarmNodes: Set<BuildGraphNodeId>) -> [BuildGraphNodeId] {
+    private func nodeSwarm(nodes swarmNodes: Set<BuildGraphNodeId>, direction: SwarmNodesDirections) -> [BuildGraphNodeId] {
         // make n-direction BDF search
 
         guard swarmNodes.count > 1 else {
@@ -135,8 +148,8 @@ public extension BuildGraphProtocol {
 
         while let path = pathsToProcess.dequeue(), !leftNodes.isEmpty {
             // we know there is at least 1 element in a path
-            let startNode = path.path.first!
-            let endNode = path.path.last!
+            let startNode = path.startingNode
+            let endNode = path.endingNode
 
             guard shortestPaths[startNode]?[endNode] == nil else {
                 // we have already been here
@@ -146,22 +159,17 @@ public extension BuildGraphProtocol {
             guard let endNodeInfo = nodes[endNode] else {
                 fatalError("Consistency error: missing \(endNode) in a projection")
             }
-            // copying a set because in a loop we modify the set itself
-            let iterationNodes = leftNodes
-            for leftNode in iterationNodes {
-                guard leftNodes.contains(leftNode) else {
-                    // we don't want to double check nodes that have already been deleted in a previous iteration
-                    continue
-                }
+            for leftNode in swarmNodes {
                 guard leftNode != startNode else {
                     // no need to find a path to itself
                     continue
                 }
-                if let leftNodeShortestPathToEnd = shortestPaths[leftNode]?[endNode] {
+                if let leftNodeShortestPathToTheCommonPath = leftNode == endNode ? path :
+                    shortestPaths[leftNode]?[endNode] {
                     // we found the shortest path between leftNode and startNode
-                    let nodesToAddToSwarm = path.nodes.union(leftNodeShortestPathToEnd.nodes)
+                    let nodesToAddToSwarm = path.nodes.union(leftNodeShortestPathToTheCommonPath.nodes)
                     // pick only the path if it is connected with the rest of the resultNodes
-                    if resultNodes.isEmpty ||  !resultNodes.isDisjoint(with: nodesToAddToSwarm) {
+                    if resultNodes.isEmpty || !resultNodes.isDisjoint(with: nodesToAddToSwarm) {
                         leftNodes.remove(leftNode)
                         leftNodes.remove(startNode)
                         // add nodes from start->end
@@ -170,7 +178,14 @@ public extension BuildGraphProtocol {
                     }
                 }
             }
-            for neighbor in endNodeInfo.inputs.union(endNodeInfo.outputs) {
+            var neighbors: Set<BuildGraphNodeId> = []
+            if direction.contains(.input) {
+                neighbors.formUnion(endNodeInfo.inputs)
+            }
+            if direction.contains(.output) {
+                neighbors.formUnion(endNodeInfo.outputs)
+            }
+            for neighbor in neighbors {
                 guard !path.nodes.contains(neighbor) else {
                     // we are in a cycle - no need to check that infinite path
                     continue

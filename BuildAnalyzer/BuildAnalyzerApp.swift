@@ -19,6 +19,7 @@ struct BuildAnalyzerApp: App {
     @State private var presentationError: ManifestFinderError?
     @State private var loading: Bool = false
     @State private var graphStyle: GraphLayoutStyle = .standard
+    @State private var appAlternatives: AppAlternatives = AppAlternatives()
 
     var body: some Scene {
         Window(Self.DefaultTitle, id: "MainWindow") {
@@ -54,10 +55,16 @@ struct BuildAnalyzerApp: App {
                     }
                 }
             })
-            let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection, focus: $focus)
+            let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection, focus: $focus, alternatives: $appAlternatives)
             AppView(
                 selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, graphLayout: $graphStyle, web: webView, error: $presentationError, loading: $loading
             )
+            .onAppear {
+                NSEvent.addLocalMonitorForEvents(matching: [.flagsChanged]) { event in
+                    appAlternatives.command = event.modifierFlags.contains([.command])
+                    return event
+                }
+            }
         }
     }
 }

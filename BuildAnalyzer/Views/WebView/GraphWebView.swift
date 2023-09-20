@@ -55,10 +55,12 @@ class GraphWebViewController {
     @Binding var selection: Set<String>
     @Binding var focus: String?
     private var layout: GraphLayoutStyle = .standard
+    @Binding var appAlternatives: AppAlternatives
 
-    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>, focus: Binding<String?>) {
+    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>, focus: Binding<String?>, appAlternatives: Binding<AppAlternatives>) {
         self._graph = graph
         self._selection = selection
+        self._appAlternatives = appAlternatives
         let userContentController = WKUserContentController()
         let coordinator = GraphWebViewCoordinator()
         userContentController.add(coordinator, name: "bridge")
@@ -130,8 +132,8 @@ class GraphWebViewController {
                 // the cycle includes duplicated node
                 currentProjection.type = .circular
             } else {
-                currentProjection = graph.expand(projection: newProjection, with: .inputs(of: bgNodeId ))
-                currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
+                currentProjection = graph.expand(projection: newProjection, with: .inputs(of: bgNodeId))
+                currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId))
             }
         }
         refreshProjection(fresh: false)
@@ -158,14 +160,14 @@ class GraphWebViewController {
                 print("unknown d3 node. Probably the starting phase")
                 return
             }
-            currentProjection = graph.expand(projection: currentProjection, with: .inputs(of: bgNodeId ))
+            currentProjection = graph.expand(projection: currentProjection, with: .inputs(of: bgNodeId, count: appAlternatives.command ? 100 : 3))
             refreshProjection(fresh: false)
         case .extendOut(id: let d3Node):
             guard let bgNodeId = projector.d3GraphNodesMapping[d3Node.id] else {
                 print("unknown d3 node. Probably the starting phase")
                 return
             }
-            currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId ))
+            currentProjection = graph.expand(projection: currentProjection, with: .outputs(of: bgNodeId, count: appAlternatives.command ? 100 : 3))
             refreshProjection(fresh: false)
         case .set(let id):
             guard let nodeId = projector.d3GraphNodesMapping[id.id] else {
@@ -262,8 +264,8 @@ class GraphWebViewCoordinator: NSObject, WKNavigationDelegate, WKScriptMessageHa
 struct GraphWebView: NSViewRepresentable {
     let controller: GraphWebViewController
 
-    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>, focus: Binding<String?>) {
-        let controller = GraphWebViewController(graph: graph, graphUrl: graphUrl, selection: selection, focus: focus)
+    init(graph: Binding<BuildGraph>, graphUrl: Binding<URL?>, selection: Binding<Set<String>>, focus: Binding<String?>, alternatives: Binding<AppAlternatives>) {
+        let controller = GraphWebViewController(graph: graph, graphUrl: graphUrl, selection: selection, focus: focus, appAlternatives: alternatives)
 
         self.controller = controller
     }
