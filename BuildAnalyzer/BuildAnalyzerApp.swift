@@ -57,7 +57,7 @@ struct BuildAnalyzerApp: App {
             })
             let webView = GraphWebView(graph: $graph, graphUrl: graphUrl, selection: $selection, focus: $focus, alternatives: $appAlternatives)
             AppView(
-                selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, graphLayout: $graphStyle, web: webView, error: $presentationError, loading: $loading
+                selection: $selection, focus: $focus, graph: $graph, graphUrl: graphUrl, graphLayout: $graphStyle, web: webView, error: $presentationError, loading: $loading, appAlternatives: $appAlternatives
             )
             .onAppear {
                 NSEvent.addLocalMonitorForEvents(matching: [.flagsChanged]) { event in

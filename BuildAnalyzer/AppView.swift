@@ -35,6 +35,7 @@ struct AppView: View {
     private let hierarchyBuilder = GraphHierarchyContentBuilder<GraphHierarchyTargetGroup>()
     @Binding var error: ManifestFinderError?
     @Binding var loading: Bool
+    @Binding var appAlternatives: AppAlternatives
 
     var body: some View {
         ZStack {
@@ -61,7 +62,11 @@ struct AppView: View {
 
                             HStack {
                                 Button<Text>("❖") {
-                                    web.controller.resetZoom()
+                                    if appAlternatives.command {
+                                        web.controller.webView.reload()
+                                    } else {
+                                        web.controller.resetZoom()
+                                    }
                                 }
                                 .help("Reset zoom")
 
@@ -73,7 +78,8 @@ struct AppView: View {
                             .opacity(graph.nodes.isEmpty ? 0 : 1)
                             .padding(5)
 
-                        }.layoutPriority(1000)
+                        }
+                        .layoutPriority(1000)
 
                         GraphItemView (
                             item: graph.nodes[BuildGraphNodeId(id: ($focus.wrappedValue ?? ""))], focus: $focus

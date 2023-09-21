@@ -164,8 +164,11 @@ public extension BuildGraphProtocol {
                     // no need to find a path to itself
                     continue
                 }
-                if let leftNodeShortestPathToTheCommonPath = leftNode == endNode ? path :
-                    shortestPaths[leftNode]?[endNode] {
+                if leftNode == endNode {
+                    // always add path between starting -> endNode
+                    resultNodes.formUnion(path.nodes)
+                }
+                if let leftNodeShortestPathToTheCommonPath = shortestPaths[leftNode]?[endNode] {
                     // we found the shortest path between leftNode and startNode
                     let nodesToAddToSwarm = path.nodes.union(leftNodeShortestPathToTheCommonPath.nodes)
                     // pick only the path if it is connected with the rest of the resultNodes
