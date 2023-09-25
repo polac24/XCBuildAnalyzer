@@ -1,6 +1,12 @@
 import Foundation
 
 public extension BuildGraphNode {
+    public enum NodeType {
+        // an actual command
+        case command
+        // a "virtual" node that only aggregates inputs/outputs
+        case node
+    }
     indirect enum Kind: Hashable, Comparable {
         // Group of the kind - used to group all nodes in the Hierarchy outline (left pane)
         public enum Group: Comparable {

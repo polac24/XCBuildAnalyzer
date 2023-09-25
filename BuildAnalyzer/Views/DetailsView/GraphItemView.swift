@@ -155,10 +155,9 @@ struct GraphItemView: View {
     var body: some View {
         VStack {
             ScrollView{
-                Text("Details")
+                Text("Details \(item?.type == .command ? "- command" : "")")
                 Text(item?.id.id ?? "").textSelection(.enabled)
                 GraphItemDetailView(title: "Tool", value: item?.tool)
-                GraphItemDetailView(title: "Description", value: item?.description)
                 GraphItemDetailEnvView(title: "ENVs", values: item?.env)
                 GraphItemDetailsArrayView(title: "Args", items: item?.args)
                 GraphItemDetailView(title: "Working Directory", value: item?.workingDirectory)
@@ -176,7 +175,7 @@ struct GraphItemView: View {
 struct GraphItemView_Previews: PreviewProvider {
     static var previews: some View {
         GraphItemView(
-            item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [.init(id: "1111eee1sdajiodjasi doaijd oasidj aoidj osaidj asoidj asoidj aosidja sdioaj oasidj oaijd oiasjd oaisjd oaisjd oaisjd oaisjd oiasjd iasjod ij oi")], outputs: [], expectedOutputs: ["a.h"], roots: ["/root"], env: ["a":"B", "c": "Sssss"], description: "desc", args: ["-a","-b"], signature: "signature", workingDirectory: "/work", timing: BuildGraphNodeTiming(node: .init(id:"id"), start: 20.3221, end: 100.2, percentage: 0.5)), focus: .constant(nil))
+            item: BuildGraphNode(id: .init(id: ""), tool: "tool", name: "Name", properties: [:], inputs: [.init(id: "1111eee1sdajiodjasi doaijd oasidj aoidj osaidj asoidj asoidj aosidja sdioaj oasidj oaijd oiasjd oaisjd oaisjd oaisjd oaisjd oiasjd iasjod ij oi")], outputs: [], expectedOutputs: ["a.h"], roots: ["/root"], env: ["a":"B", "c": "Sssss"], description: "desc", args: ["-a","-b"], signature: "signature", workingDirectory: "/work", timing: BuildGraphNodeTiming(node: .init(id:"id"), start: 20.3221, end: 100.2, percentage: 0.5), type: .command), focus: .constant(nil))
     }
 }
 

@@ -50,8 +50,9 @@ public struct BuildGraphNode: Hashable, Equatable {
     public let workingDirectory: String?
     public let timing: BuildGraphNodeTiming?
     public let kind: BuildGraphNode.Kind
+    public let type: BuildGraphNode.NodeType
 
-    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, expectedOutputs: [String]?, roots: [String]?, env: [String: String]?, description: String?, args: [String]?, signature: String?, workingDirectory: String?, timing: BuildGraphNodeTiming?) {
+    public init(id: BuildGraphNodeId, tool: String, name: String, properties: [Property : PropertyValue], inputs: Set<BuildGraphNodeId>, outputs: Set<BuildGraphNodeId>, expectedOutputs: [String]?, roots: [String]?, env: [String: String]?, description: String?, args: [String]?, signature: String?, workingDirectory: String?, timing: BuildGraphNodeTiming?, type: NodeType) {
         self.id = id
         self.tool = tool
         self.name = name
@@ -67,6 +68,7 @@ public struct BuildGraphNode: Hashable, Equatable {
         self.description = description
         self.roots = roots
         self.expectedOutputs = expectedOutputs
+        self.type = type
     }
 }
 
@@ -88,7 +90,8 @@ extension BuildGraphNode {
             args: nil,
             signature: nil,
             workingDirectory: nil,
-            timing: nil
+            timing: nil,
+            type: .node
         )
     }
 }

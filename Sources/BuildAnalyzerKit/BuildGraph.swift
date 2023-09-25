@@ -81,7 +81,8 @@ public extension BuildGraph {
                 args: command.args,
                 signature: command.signature,
                 workingDirectory: command.workingDirectory,
-                timing: timings[commandNodeId]
+                timing: timings[commandNodeId],
+                type: .command
             )
             visitedNodes[commandNodeId] = node
         }
