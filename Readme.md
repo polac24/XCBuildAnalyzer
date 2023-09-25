@@ -12,6 +12,8 @@ The tool relies on a build manifest json file that is always generated in the pr
 
 ## Getting Started
 
+[Inspecting Xcode’s build system graph at ease](https://medium.com/@londeix/inspecting-xcodes-build-system-graph-at-ease-e96573d5d340) blogpost on medium.com
+
 To analyze your most recent build system graph, drag&drop a project file to the application area. Depending on a size of a project and nodes in a graph, it may take some time but usually should finish within couple of seconds.
 
 On a left pane you will see graph nodes aggregated by target names (if applicable). The build graph is very often massive so to improve the reliability and performance, analyzing a subgraph is recommended.
