@@ -28,7 +28,7 @@ enum ManifestFinderError: Error, LocalizedError {
         switch self {
         case .projectDictionaryNotFound(let dirs):
             return "Make sure you DerivedData dir exist at any of these directories: \n\(dirs.map(\.path).joined(separator: ",\n")).\n\n If the project name does not match, you can manually drag&drop *-manifest.xcbuild or manifest.json files from XCBuildData in your DerivedData"
-        case .invalidFileFormat(let url): return "The file \(url.path) is not supported. Please open .xcodeproj, .xcworkspace, Package.swift or raw manifest.json/-manifest.xcbuild"
+        case .invalidFileFormat(let url): return "The file \(url.path) is not supported. Please open .xcodeproj, .xcworkspace, Package.swift, .playground or raw manifest.json/-manifest.xcbuild"
         default:
             return "Make sure you built at least once from Xcode"
         }

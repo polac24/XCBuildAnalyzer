@@ -59,7 +59,7 @@ public struct ManifestFinder {
             return .init(projectFile: nil, manifest: file, timingDatabase: nil)
         case "xcbuild" where file.lastPathComponent.hasSuffix("-manifest.xcbuild"):
             return .init(projectFile: nil, manifest: file, timingDatabase: nil)
-        case "xcodeproj", "xcworkspace", "swift":
+        case "xcodeproj", "xcworkspace", "swift", "playground":
             // swift for Package.swift approach
             return try findManifestFromProject(options: options)?.withProjectFile(options.project)
         default:
