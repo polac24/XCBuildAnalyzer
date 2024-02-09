@@ -97,9 +97,10 @@ By default, XCBuildAnalyzer finds the most recent graph manifest found in the De
 
 #### Building a project locally
 
-* open BuildAnalyzer.xcodeproj
-* [Optional] pick BuildAnalyzer scheme
-* Run the app with ⌘+R
+1. Download node.js dependencies, by calling `scripts/dependencies.sh` (npm required)
+1. open BuildAnalyzer.xcodeproj
+1. [Optional] pick BuildAnalyzer scheme
+1. Run the app with ⌘+R
 
 
 ## Authors
